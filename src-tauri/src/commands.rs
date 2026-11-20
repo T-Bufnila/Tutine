@@ -106,6 +106,9 @@ pub fn set_setting(state: State<AppDb>, key: String, value: String) -> CmdResult
     if key == settings::SOUND_ID && !valid_sound {
         return Err("Unknown sound".into());
     }
+    if key == settings::THEME && !settings::THEMES.contains(&value.as_str()) {
+        return Err("Unknown theme".into());
+    }
     with_db(&state, |c| settings::update_user(c, &key, &value))
 }
 

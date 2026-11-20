@@ -2,6 +2,7 @@ import type { SettingKey, Settings } from "../../lib/types";
 import { AlertSettings } from "./AlertSettings";
 import { SettingRow, SettingsSection } from "./SettingRow";
 import { SoundLibrary } from "./SoundLibrary";
+import { ThemePicker } from "./ThemePicker";
 
 interface SettingsViewProps {
   settings: Settings;
@@ -16,6 +17,14 @@ export function SettingsView({ settings, onChange, onTestAlert, onSoundsChanged 
       <header className="page-head">
         <h1>Settings</h1>
       </header>
+
+      <SettingsSection title="Appearance">
+        <div className="theme-setting">
+          <strong>Colour theme</strong>
+          <div className="muted small">"System" switches between Light and Dark with your operating system.</div>
+          <ThemePicker value={settings.theme} onChange={(theme) => onChange("theme", theme)} />
+        </div>
+      </SettingsSection>
 
       <SettingsSection title="Alerts">
         <AlertSettings settings={settings} onChange={onChange} onTestAlert={onTestAlert} />

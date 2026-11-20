@@ -7,3 +7,4 @@ I operate on given routines and was getting tired setting up daily todos. So I c
 2. Select routine.
 3. Follow it.
 
+ 

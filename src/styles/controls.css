@@ -82,7 +82,7 @@ select:focus {
 }
 .btn.primary {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 .btn.primary:disabled {
   opacity: 0.4;
@@ -104,7 +104,7 @@ select:focus {
   font-weight: 600;
 }
 .temp-add:hover {
-  background: rgba(34, 197, 94, 0.1);
+  background: var(--green-dim);
 }
 
 /* --- Checkbox ------------------------------------------------------------ */
@@ -117,8 +117,8 @@ select:focus {
   width: 20px;
   height: 20px;
   border-radius: 5px;
-  border: 2px solid #6b6b78;
-  color: #fff;
+  border: 2px solid var(--check-border);
+  color: var(--on-accent);
 }
 .check.small {
   width: 16px;
@@ -160,7 +160,7 @@ select:focus {
   padding: 0 6px;
   border-radius: 8px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 11px;
 }
 
@@ -199,7 +199,7 @@ select:focus {
   padding: 0;
   border: none;
   border-radius: 11px;
-  background: #222;
+  background: var(--switch-off);
   cursor: pointer;
 }
 .switch::after {
@@ -210,14 +210,14 @@ select:focus {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #888;
+  background: var(--switch-knob);
 }
 .switch:checked {
   background: var(--accent);
 }
 .switch:checked::after {
   left: 19px;
-  background: #fff;
+  background: var(--on-accent);
 }
 
 /* --- Modal --------------------------------------------------------------- */
@@ -229,7 +229,7 @@ select:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--overlay);
 }
 .modal {
   width: 420px;

@@ -1,3 +1,5 @@
+import type { ThemeId } from "./themes";
+
 export interface RoutineItem {
   id?: number;
   weekIndex: number;
@@ -59,9 +61,16 @@ export interface Settings {
   soundEnabled: boolean;
   /** `builtin:<name>` or `custom:<id>`. */
   soundId: string;
+  theme: ThemeId;
 }
 
-export type SettingKey = "notifications" | "time_format" | "week_start" | "sound_enabled" | "sound_id";
+export type SettingKey =
+  | "notifications"
+  | "time_format"
+  | "week_start"
+  | "sound_enabled"
+  | "sound_id"
+  | "theme";
 
 /** An uploaded alert sound; the audio itself is fetched on demand. */
 export interface Sound {

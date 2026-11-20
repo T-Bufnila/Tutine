@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { DEFAULT_THEME, isThemeId } from "./themes";
 import type { HistoryDay, Routine, SettingKey, Settings, Sound, TodayData } from "./types";
 
 export const DEFAULT_SOUND_ID = "builtin:chime";
@@ -9,6 +10,7 @@ export const DEFAULT_SETTINGS: Settings = {
   weekStart: "mon",
   soundEnabled: true,
   soundId: DEFAULT_SOUND_ID,
+  theme: DEFAULT_THEME,
 };
 
 function parseSettings(raw: Record<string, string>): Settings {
@@ -18,6 +20,7 @@ function parseSettings(raw: Record<string, string>): Settings {
     weekStart: raw.week_start === "sun" ? "sun" : "mon",
     soundEnabled: raw.sound_enabled !== "0",
     soundId: raw.sound_id || DEFAULT_SOUND_ID,
+    theme: raw.theme && isThemeId(raw.theme) ? raw.theme : DEFAULT_THEME,
   };
 }
 

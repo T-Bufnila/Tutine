@@ -20,19 +20,19 @@
 /* --- Intensity levels (shared) ------------------------------------------- */
 
 .l0 {
-  background: #151515;
+  background: var(--heat-0);
 }
 .l1 {
-  background: #3b1a63;
+  background: var(--heat-1);
 }
 .l2 {
-  background: #6b2fb0;
+  background: var(--heat-2);
 }
 .l3 {
-  background: #9142e0;
+  background: var(--heat-3);
 }
 .l4 {
-  background: #c084fc;
+  background: var(--heat-4);
 }
 
 /* --- Month view ---------------------------------------------------------- */
@@ -57,10 +57,14 @@
   border-radius: 6px;
   font-size: 12px;
 }
+.month-cell.l3,
+.month-cell.l4 {
+  color: var(--on-accent);
+}
 .month-cell small {
   align-self: flex-end;
-  color: rgba(255, 255, 255, 0.75);
   font-size: 11px;
+  opacity: 0.75;
 }
 .month-cell.future {
   background: none;

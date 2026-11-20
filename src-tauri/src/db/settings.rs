@@ -7,6 +7,20 @@ pub const WEEK_START: &str = "week_start";
 pub const SOUND_ENABLED: &str = "sound_enabled";
 pub const SOUND_ID: &str = "sound_id";
 pub const DEFAULT_SOUND_ID: &str = "builtin:chime";
+pub const THEME: &str = "theme";
+
+/// Theme ids the UI can select; keep in sync with src/lib/themes.ts.
+pub const THEMES: [&str; 9] = [
+    "system",
+    "dark",
+    "light",
+    "gruvbox-dark",
+    "gruvbox-light",
+    "nord",
+    "dracula",
+    "solarized-dark",
+    "solarized-light",
+];
 
 // Internal bookkeeping for today's generated todos; never exposed to the UI.
 pub const GEN_DATE: &str = "gen_date";
@@ -14,7 +28,7 @@ pub const GEN_ROUTINE: &str = "gen_routine";
 pub const GEN_DIRTY: &str = "gen_dirty";
 
 /// Settings the frontend is allowed to change.
-pub const USER_KEYS: [&str; 5] = ["notifications", "time_format", WEEK_START, SOUND_ENABLED, SOUND_ID];
+pub const USER_KEYS: [&str; 6] = ["notifications", "time_format", WEEK_START, SOUND_ENABLED, SOUND_ID, THEME];
 
 pub fn get(conn: &Connection, key: &str) -> Res<String> {
     Ok(conn

@@ -9,6 +9,7 @@ import { useTodayActions } from "./features/today/useTodayActions";
 import { useAppData } from "./hooks/useAppData";
 import { useAlert, useDueAlerts } from "./hooks/useAlerts";
 import { useClock } from "./hooks/useClock";
+import { useTheme } from "./hooks/useTheme";
 import type { Routine, View } from "./lib/types";
 import { installAudioUnlock } from "./lib/sound";
 
@@ -18,6 +19,7 @@ export default function App() {
 
   const [view, setView] = useState<View>({ kind: "today" });
   const now = useClock(data.reloadToday);
+  useTheme(settings.theme);
   const raiseAlert = useAlert(settings);
   const todayActions = useTodayActions({ ...data, alert: raiseAlert });
   useDueAlerts(today, settings, raiseAlert);

@@ -1,0 +1,185 @@
+/* ==========================================================================
+   Colour themes
+   Each theme sets the same tokens; set `data-theme` on <html> to switch.
+   The default (no attribute) is the dark theme.
+   ========================================================================== */
+
+/* --- Dark (default, pure black) ------------------------------------------ */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #000;
+  --surface: #080808;
+  --raised: #111;
+  --input: #151515;
+  --border: #1f1f1f;
+  --text: #ececec;
+  --muted: #7d7d85;
+  --accent: #a855f7;
+  --on-accent: #fff;
+  --red: #ef4444;
+  --green: #22c55e;
+  --check-border: #6b6b78;
+  --scrollbar: #222;
+  --switch-off: #222;
+  --switch-knob: #888;
+  --overlay: rgba(0, 0, 0, 0.7);
+}
+
+/* --- Light ----------------------------------------------------------------- */
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #fff;
+  --surface: #f6f6f8;
+  --raised: #fff;
+  --input: #fff;
+  --border: #e2e2e8;
+  --text: #1b1b1f;
+  --muted: #6b6b76;
+  --accent: #7c3aed;
+  --on-accent: #fff;
+  --red: #dc2626;
+  --green: #16a34a;
+  --check-border: #9a9aa8;
+  --scrollbar: #d4d4dc;
+  --switch-off: #d4d4dc;
+  --switch-knob: #fff;
+  --overlay: rgba(0, 0, 0, 0.35);
+}
+
+/* --- Gruvbox --------------------------------------------------------------- */
+[data-theme="gruvbox-dark"] {
+  color-scheme: dark;
+  --bg: #1d2021;
+  --surface: #282828;
+  --raised: #32302f;
+  --input: #3c3836;
+  --border: #504945;
+  --text: #ebdbb2;
+  --muted: #a89984;
+  --accent: #fe8019;
+  --on-accent: #282828;
+  --red: #fb4934;
+  --green: #b8bb26;
+  --check-border: #7c6f64;
+  --scrollbar: #504945;
+  --switch-off: #504945;
+  --switch-knob: #a89984;
+  --overlay: rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="gruvbox-light"] {
+  color-scheme: light;
+  --bg: #fbf1c7;
+  --surface: #f2e5bc;
+  --raised: #fbf1c7;
+  --input: #fbf1c7;
+  --border: #d5c4a1;
+  --text: #3c3836;
+  --muted: #7c6f64;
+  --accent: #af3a03;
+  --on-accent: #fbf1c7;
+  --red: #cc241d;
+  --green: #79740e;
+  --check-border: #a89984;
+  --scrollbar: #d5c4a1;
+  --switch-off: #d5c4a1;
+  --switch-knob: #fbf1c7;
+  --overlay: rgba(60, 56, 54, 0.4);
+}
+
+/* --- Nord ------------------------------------------------------------------ */
+[data-theme="nord"] {
+  color-scheme: dark;
+  --bg: #242933;
+  --surface: #2e3440;
+  --raised: #3b4252;
+  --input: #3b4252;
+  --border: #434c5e;
+  --text: #eceff4;
+  --muted: #8f9bb3;
+  --accent: #88c0d0;
+  --on-accent: #2e3440;
+  --red: #bf616a;
+  --green: #a3be8c;
+  --check-border: #616e88;
+  --scrollbar: #4c566a;
+  --switch-off: #4c566a;
+  --switch-knob: #d8dee9;
+  --overlay: rgba(20, 24, 31, 0.65);
+}
+
+/* --- Dracula --------------------------------------------------------------- */
+[data-theme="dracula"] {
+  color-scheme: dark;
+  --bg: #191a21;
+  --surface: #282a36;
+  --raised: #343746;
+  --input: #343746;
+  --border: #44475a;
+  --text: #f8f8f2;
+  --muted: #8791c4;
+  --accent: #bd93f9;
+  --on-accent: #282a36;
+  --red: #ff5555;
+  --green: #50fa7b;
+  --check-border: #6272a4;
+  --scrollbar: #44475a;
+  --switch-off: #44475a;
+  --switch-knob: #a0a4c0;
+  --overlay: rgba(10, 10, 16, 0.65);
+}
+
+/* --- Solarized ------------------------------------------------------------- */
+[data-theme="solarized-dark"] {
+  color-scheme: dark;
+  --bg: #00212b;
+  --surface: #002b36;
+  --raised: #073642;
+  --input: #073642;
+  --border: #164a57;
+  --text: #93a1a1;
+  --muted: #657b83;
+  --accent: #268bd2;
+  --on-accent: #fdf6e3;
+  --red: #dc322f;
+  --green: #859900;
+  --check-border: #586e75;
+  --scrollbar: #164a57;
+  --switch-off: #164a57;
+  --switch-knob: #839496;
+  --overlay: rgba(0, 20, 26, 0.7);
+}
+
+[data-theme="solarized-light"] {
+  color-scheme: light;
+  --bg: #fdf6e3;
+  --surface: #eee8d5;
+  --raised: #fdf6e3;
+  --input: #fdf6e3;
+  --border: #ddd6c1;
+  --text: #586e75;
+  --muted: #839496;
+  --accent: #268bd2;
+  --on-accent: #fdf6e3;
+  --red: #dc322f;
+  --green: #859900;
+  --check-border: #93a1a1;
+  --scrollbar: #ddd6c1;
+  --switch-off: #ddd6c1;
+  --switch-knob: #fdf6e3;
+  --overlay: rgba(7, 54, 66, 0.35);
+}
+
+/* --- Derived tokens --------------------------------------------------------
+   Declared on every themed element so theme preview cards recompute them too. */
+:root,
+[data-theme] {
+  --accent-dim: color-mix(in srgb, var(--accent) 16%, var(--surface));
+  --green-dim: color-mix(in srgb, var(--green) 12%, transparent);
+  --heat-0: color-mix(in srgb, var(--text) 8%, var(--surface));
+  --heat-1: color-mix(in srgb, var(--accent) 30%, var(--surface));
+  --heat-2: color-mix(in srgb, var(--accent) 55%, var(--surface));
+  --heat-3: color-mix(in srgb, var(--accent) 80%, var(--surface));
+  --heat-4: var(--accent);
+}
