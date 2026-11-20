@@ -1,0 +1,161 @@
+/* ==========================================================================
+   Todo list, breaks and break timer
+   ========================================================================== */
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.todo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.todo.current {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+}
+.todo.done .todo-title {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.todo-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.todo-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.badge {
+  padding: 1px 7px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.badge.temp {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.swatch {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.actions {
+  display: flex;
+  gap: 2px;
+}
+
+/* --- Break (indented under its todo) ------------------------------------- */
+
+.todo.break {
+  flex-direction: column;
+  align-items: stretch;
+  margin-left: 32px;
+  padding: 10px 14px;
+  background: none;
+  border-style: dashed;
+}
+.todo.break.locked {
+  opacity: 0.6;
+}
+.todo.break.ready {
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+.break-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Collapsed until the todo before the break is checked. Overrides the global no-transition rule. */
+.break-expand {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 220ms ease,
+    opacity 220ms ease !important;
+}
+.break-expand.open {
+  max-height: 80px;
+  opacity: 1;
+}
+
+/* --- Break timer --------------------------------------------------------- */
+
+.break-timer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+}
+.clock {
+  color: var(--muted);
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.clock.running {
+  color: var(--accent);
+}
+
+.timer-actions {
+  display: flex;
+  gap: 6px;
+}
+.timer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: var(--muted);
+}
+.timer-btn:hover {
+  background: var(--input);
+  color: var(--text);
+}
+.timer-btn.accent {
+  color: var(--accent);
+}
+.timer-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}

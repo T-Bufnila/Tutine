@@ -1,0 +1,88 @@
+/* ==========================================================================
+   Settings: rows, permission status, alert sound library
+   ========================================================================== */
+
+.settings-section {
+  margin-bottom: 32px;
+}
+.settings-section > h2 {
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+/* --- Permission status --------------------------------------------------- */
+
+.permission {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.permission.ok {
+  color: var(--green);
+}
+.permission.blocked {
+  color: var(--red);
+}
+.link {
+  color: var(--accent);
+  font-size: inherit;
+  text-decoration: underline;
+}
+
+/* --- Sound library ------------------------------------------------------- */
+
+.sound-library {
+  padding: 16px 0;
+}
+.sound-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 12px;
+}
+.sound-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sound-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 10px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.sound-item.selected {
+  border-color: var(--accent);
+}
+.sound-pick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  padding: 4px 0;
+  cursor: pointer;
+}
+.sound-pick input {
+  accent-color: var(--accent);
+}
