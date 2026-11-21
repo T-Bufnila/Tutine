@@ -12,13 +12,21 @@ pub fn is_mp3(bytes: &[u8]) -> bool {
 
 pub fn list(conn: &Connection) -> Res<Vec<Sound>> {
     let mut stmt = conn.prepare("SELECT id, name FROM sounds ORDER BY name COLLATE NOCASE, id")?;
-    let rows = stmt.query_map([], |r| Ok(Sound { id: r.get(0)?, name: r.get(1)? }))?;
+    let rows = stmt.query_map([], |r| {
+        Ok(Sound {
+            id: r.get(0)?,
+            name: r.get(1)?,
+        })
+    })?;
     rows.collect()
 }
 
 pub fn add(conn: &Connection, name: &str, data: &[u8]) -> Res<Sound> {
     conn.execute("INSERT INTO sounds(name, data) VALUES(?1, ?2)", params![name, data])?;
-    Ok(Sound { id: conn.last_insert_rowid(), name: name.to_string() })
+    Ok(Sound {
+        id: conn.last_insert_rowid(),
+        name: name.to_string(),
+    })
 }
 
 pub fn rename(conn: &Connection, id: i64, name: &str) -> Res<()> {

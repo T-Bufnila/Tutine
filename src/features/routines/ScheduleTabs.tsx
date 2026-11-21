@@ -14,7 +14,15 @@ interface ScheduleTabsProps {
 }
 
 /** Week selector (only for multi-week cycles) followed by weekday tabs. */
-export function ScheduleTabs({ weeks, week, onWeekChange, weekday, onWeekdayChange, weekStart, countFor }: ScheduleTabsProps) {
+export function ScheduleTabs({
+  weeks,
+  week,
+  onWeekChange,
+  weekday,
+  onWeekdayChange,
+  weekStart,
+  countFor,
+}: ScheduleTabsProps) {
   const weekTabs = Array.from({ length: weeks }, (_, w) => ({ value: w, label: `Week ${w + 1}` }));
   const dayTabs = orderedWeekdays(weekStart).map((d) => ({
     value: d,

@@ -49,7 +49,11 @@ export function RoutineGroup(p: RoutineGroupProps) {
       {open ? (
         <div className="routine-body">
           {p.days.map((d) => {
-            const classes = ["day", p.selectedWeekday === d ? "selected" : "", active && p.todayWeekday === d ? "today" : ""];
+            const classes = [
+              "day",
+              p.selectedWeekday === d ? "selected" : "",
+              active && p.todayWeekday === d ? "today" : "",
+            ];
             return (
               <button key={d} className={classes.join(" ")} onClick={() => p.onSelectDay(d)}>
                 {WEEKDAYS_SHORT[d]}

@@ -53,9 +53,8 @@ fn map_todo(r: &Row) -> Res<Todo> {
 // ---------------------------------------------------------------------------
 
 fn completed_generated_keys(conn: &Connection, date: &str) -> Res<HashSet<TodoKey>> {
-    let mut stmt = conn.prepare(
-        "SELECT kind, title, start_time FROM todos WHERE date = ?1 AND kind != ?2 AND done = 1",
-    )?;
+    let mut stmt =
+        conn.prepare("SELECT kind, title, start_time FROM todos WHERE date = ?1 AND kind != ?2 AND done = 1")?;
     let rows = stmt.query_map(params![date, KIND_CUSTOM], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?;
     rows.collect()
 }
@@ -123,8 +122,8 @@ fn ensure_today(conn: &Connection) -> Res<()> {
 
     let active = routines::active(&tx)?;
     let routine_key = active.as_ref().map(|a| a.id.to_string()).unwrap_or_default();
-    let same_target = settings::get(&tx, settings::GEN_DATE)? == date
-        && settings::get(&tx, settings::GEN_ROUTINE)? == routine_key;
+    let same_target =
+        settings::get(&tx, settings::GEN_DATE)? == date && settings::get(&tx, settings::GEN_ROUTINE)? == routine_key;
     let dirty = settings::get(&tx, settings::GEN_DIRTY)? == "1";
     if same_target && !dirty {
         return tx.commit();
@@ -136,7 +135,10 @@ fn ensure_today(conn: &Connection) -> Res<()> {
     } else {
         HashSet::new()
     };
-    tx.execute("DELETE FROM todos WHERE date = ?1 AND kind != ?2", params![date, KIND_CUSTOM])?;
+    tx.execute(
+        "DELETE FROM todos WHERE date = ?1 AND kind != ?2",
+        params![date, KIND_CUSTOM],
+    )?;
 
     if let Some(routine) = &active {
         generate_from_routine(&tx, &date, routine, &completed)?;
@@ -177,11 +179,10 @@ pub fn get_today(conn: &Connection) -> Res<TodayData> {
 
 pub fn set_done(conn: &Connection, id: i64, done: bool) -> Res<()> {
     conn.execute("UPDATE todos SET done = ?1 WHERE id = ?2", params![done as i64, id])?;
-    let (date, kind, end_time): (String, String, String) = conn.query_row(
-        "SELECT date, kind, end_time FROM todos WHERE id = ?1",
-        [id],
-        |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
-    )?;
+    let (date, kind, end_time): (String, String, String) =
+        conn.query_row("SELECT date, kind, end_time FROM todos WHERE id = ?1", [id], |r| {
+            Ok((r.get(0)?, r.get(1)?, r.get(2)?))
+        })?;
 
     // Unchecking a routine todo re-locks the break that follows it.
     if !done && kind == KIND_ROUTINE {

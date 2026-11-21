@@ -4,8 +4,8 @@ pub mod routines;
 pub mod settings;
 pub mod sounds;
 pub mod tags;
-pub mod todos;
 mod time;
+pub mod todos;
 
 use rusqlite::Connection;
 use std::path::Path;

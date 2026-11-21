@@ -93,7 +93,10 @@ export function AlertSettings({ settings, onChange, onTestAlert }: AlertSettings
         <VolumeSlider value={settings.soundVolume} disabled={!settings.soundEnabled} onCommit={commitVolume} />
       </SettingRow>
 
-      <SettingRow title="Test alert" description="Sends a notification and plays the sound using your current settings.">
+      <SettingRow
+        title="Test alert"
+        description="Sends a notification and plays the sound using your current settings."
+      >
         <button className="btn ghost" onClick={onTestAlert}>
           Send test
         </button>

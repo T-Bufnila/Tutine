@@ -66,7 +66,9 @@ export function SoundLibrary({ selectedId, volume, onSelect, onSoundsChanged }: 
       <div className="sound-head">
         <div>
           <strong>Alert sound</strong>
-          <div className="muted small">Pick the sound that plays when a todo is due, or upload your own MP3 (up to 5 MB).</div>
+          <div className="muted small">
+            Pick the sound that plays when a todo is due, or upload your own MP3 (up to 5 MB).
+          </div>
         </div>
         <button className="temp-add" onClick={() => fileInput.current?.click()}>
           <PlusIcon size={18} /> Add sound
@@ -80,7 +82,12 @@ export function SoundLibrary({ selectedId, volume, onSelect, onSoundsChanged }: 
         {entries.map((entry) => (
           <li key={entry.id} className={`sound-item ${selectedId === entry.id ? "selected" : ""}`}>
             <label className="sound-pick">
-              <input type="radio" name="alert-sound" checked={selectedId === entry.id} onChange={() => onSelect(entry.id)} />
+              <input
+                type="radio"
+                name="alert-sound"
+                checked={selectedId === entry.id}
+                onChange={() => onSelect(entry.id)}
+              />
               <span>{entry.name}</span>
               {entry.custom ? null : <span className="muted small">Built-in</span>}
             </label>
@@ -90,7 +97,11 @@ export function SoundLibrary({ selectedId, volume, onSelect, onSoundsChanged }: 
               </button>
               {entry.custom ? (
                 <>
-                  <button className="icon" title="Rename" onClick={() => setDialog({ kind: "rename", sound: entry.custom as Sound })}>
+                  <button
+                    className="icon"
+                    title="Rename"
+                    onClick={() => setDialog({ kind: "rename", sound: entry.custom as Sound })}
+                  >
                     <EditIcon />
                   </button>
                   <button className="icon del" title="Delete" onClick={() => confirmDelete(entry.custom as Sound)}>

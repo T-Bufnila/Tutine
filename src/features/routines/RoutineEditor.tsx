@@ -129,7 +129,9 @@ export function RoutineEditor({ routine, tags, settings, onSave, onCancel }: Rou
 
       {visible.length === 0 ? <p className="empty">Nothing scheduled. Add an item with +</p> : null}
       {visible.some((i) => overlapping.has(i.key)) ? (
-        <p className="error">Highlighted items overlap. An item and its break must finish before the next one starts.</p>
+        <p className="error">
+          Highlighted items overlap. An item and its break must finish before the next one starts.
+        </p>
       ) : null}
       <ul className="editor-items">
         {visible.map((item) => (

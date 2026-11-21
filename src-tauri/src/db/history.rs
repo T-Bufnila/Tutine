@@ -20,8 +20,7 @@ pub fn recompute(conn: &Connection, date: &str) -> Res<()> {
 
 pub fn list_since(conn: &Connection, days: i64) -> Res<Vec<HistoryDay>> {
     let from = time::fmt_date(time::today() - Duration::days(days));
-    let mut stmt =
-        conn.prepare("SELECT date, completed, total FROM history WHERE date >= ?1 ORDER BY date")?;
+    let mut stmt = conn.prepare("SELECT date, completed, total FROM history WHERE date >= ?1 ORDER BY date")?;
     let rows = stmt.query_map([from], |r| {
         Ok(HistoryDay {
             date: r.get(0)?,

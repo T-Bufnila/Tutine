@@ -11,7 +11,14 @@ interface RoutineItemEditorProps {
   onRemove: () => void;
 }
 
-export function RoutineItemEditor({ item, tags, conflict, onChange, onStartCommitted, onRemove }: RoutineItemEditorProps) {
+export function RoutineItemEditor({
+  item,
+  tags,
+  conflict,
+  onChange,
+  onStartCommitted,
+  onRemove,
+}: RoutineItemEditorProps) {
   return (
     <li className={`editor-item ${conflict ? "conflict" : ""}`}>
       <input
@@ -28,7 +35,12 @@ export function RoutineItemEditor({ item, tags, conflict, onChange, onStartCommi
         onChange={(e) => onChange({ startTime: e.target.value })}
         onBlur={onStartCommitted}
       />
-      <input type="time" aria-label="End time" value={item.endTime} onChange={(e) => onChange({ endTime: e.target.value })} />
+      <input
+        type="time"
+        aria-label="End time"
+        value={item.endTime}
+        onChange={(e) => onChange({ endTime: e.target.value })}
+      />
 
       <label className="inline" title="Break after (minutes)">
         <input

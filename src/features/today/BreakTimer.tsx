@@ -11,7 +11,15 @@ interface BreakTimerProps {
   onSkip: () => void;
 }
 
-export function BreakTimer({ remainingSeconds, running, started, disabled, onStart, onPause, onSkip }: BreakTimerProps) {
+export function BreakTimer({
+  remainingSeconds,
+  running,
+  started,
+  disabled,
+  onStart,
+  onPause,
+  onSkip,
+}: BreakTimerProps) {
   return (
     <div className="break-timer">
       <span className={`clock ${running ? "running" : ""}`}>{fmtClock(remainingSeconds)}</span>

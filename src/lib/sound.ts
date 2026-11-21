@@ -120,7 +120,13 @@ const builtinTones: Record<string, Tone[]> = {
     { freq: 440, start: offset, duration: 0.6, type: "triangle" as const, gain: 0.2 },
     { freq: 480, start: offset, duration: 0.6, type: "triangle" as const, gain: 0.2 },
   ]),
-  "builtin:beep": [0, 0.25, 0.5].map((start) => ({ freq: 1000, start, duration: 0.15, type: "square" as const, gain: 0.1 })),
+  "builtin:beep": [0, 0.25, 0.5].map((start) => ({
+    freq: 1000,
+    start,
+    duration: 0.15,
+    type: "square" as const,
+    gain: 0.1,
+  })),
 };
 
 // --- Custom (uploaded) sounds -------------------------------------------------

@@ -58,9 +58,7 @@ pub fn set_active_routine(state: State<AppDb>, id: Option<i64>) -> CmdResult<()>
 const COLOR_TAKEN: &str = "Another tag already uses that colour";
 
 fn clean_tag(color: &str, description: &str) -> CmdResult<()> {
-    let valid_color = color.len() == 7
-        && color.starts_with('#')
-        && color[1..].chars().all(|c| c.is_ascii_hexdigit());
+    let valid_color = color.len() == 7 && color.starts_with('#') && color[1..].chars().all(|c| c.is_ascii_hexdigit());
     if !valid_color {
         return Err("Pick a valid colour".into());
     }
@@ -163,7 +161,10 @@ fn clean_sound_name(name: &str) -> CmdResult<String> {
         return Err("Give the sound a name".into());
     }
     if name.chars().count() > sounds::MAX_NAME_CHARS {
-        return Err(format!("Sound names are limited to {} characters", sounds::MAX_NAME_CHARS));
+        return Err(format!(
+            "Sound names are limited to {} characters",
+            sounds::MAX_NAME_CHARS
+        ));
     }
     Ok(name.to_string())
 }

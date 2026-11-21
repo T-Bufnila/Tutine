@@ -36,7 +36,12 @@ export function Sidebar({ routines, today, settings, view, setView, routineActio
   return (
     <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       {/* --- Collapse toggle ---------------------------------------------- */}
-      <button className="collapse-toggle" title={toggleLabel} aria-label={toggleLabel} onClick={() => setCollapsed(!collapsed)}>
+      <button
+        className="collapse-toggle"
+        title={toggleLabel}
+        aria-label={toggleLabel}
+        onClick={() => setCollapsed(!collapsed)}
+      >
         <SidebarIcon collapsed={collapsed} />
       </button>
 

@@ -49,8 +49,7 @@ export const api = {
   // Tags
   listTags: () => invoke<Tag[]>("list_tags"),
   addTag: (color: string, description: string) => invoke<void>("add_tag", { color, description }),
-  updateTag: (id: number, color: string, description: string) =>
-    invoke<void>("update_tag", { id, color, description }),
+  updateTag: (id: number, color: string, description: string) => invoke<void>("update_tag", { id, color, description }),
   deleteTag: (id: number) => invoke<void>("delete_tag", { id }),
 
   // Today's todos

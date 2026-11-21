@@ -99,7 +99,19 @@ export function useAppData() {
     [run, reloadAll],
   );
 
-  return { routines, tags, today, settings, error, run, reloadToday, reloadAll, routineActions, tagActions, updateSetting };
+  return {
+    routines,
+    tags,
+    today,
+    settings,
+    error,
+    run,
+    reloadToday,
+    reloadAll,
+    routineActions,
+    tagActions,
+    updateSetting,
+  };
 }
 
 export type AppData = ReturnType<typeof useAppData>;

@@ -3,7 +3,15 @@ use super::{settings, time, Res};
 use rusqlite::{params, Connection, OptionalExtension, Row};
 
 const MAX_WEEKS: i64 = 12;
-const WEEKDAYS: [&str; 7] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const WEEKDAYS: [&str; 7] = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+];
 
 fn map_item(r: &Row) -> Res<RoutineItem> {
     Ok(RoutineItem {
@@ -157,7 +165,10 @@ pub fn delete(conn: &Connection, id: i64) -> Res<()> {
 }
 
 pub fn set_pinned(conn: &Connection, id: i64, pinned: bool) -> Res<()> {
-    conn.execute("UPDATE routines SET pinned = ?1 WHERE id = ?2", params![pinned as i64, id])?;
+    conn.execute(
+        "UPDATE routines SET pinned = ?1 WHERE id = ?2",
+        params![pinned as i64, id],
+    )?;
     Ok(())
 }
 
