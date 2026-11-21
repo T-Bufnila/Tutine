@@ -2,7 +2,7 @@
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Tutine",
   "version": "0.1.0",
-  "identifier": "com.rutine.app",
+  "identifier": "com.tutine.app",
   "build": {
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:1420",
@@ -27,6 +27,10 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "publisher": "Tudor Bufnila",
+    "copyright": "Copyright (C) 2026 Tudor Bufnila",
+    "license": "GPL-3.0-or-later",
+    "licenseFile": "../LICENSE",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

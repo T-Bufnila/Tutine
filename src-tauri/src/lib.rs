@@ -12,7 +12,13 @@ pub fn run() {
         .setup(|app| {
             let dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&dir)?;
-            let conn = db::open(&dir.join("rutine.db"))?;
+            let db_path = dir.join("tutine.db");
+            // Carry over data from before the com.rutine.app -> com.tutine.app rename.
+            let legacy = dir.with_file_name("com.rutine.app").join("rutine.db");
+            if !db_path.exists() && legacy.exists() {
+                std::fs::copy(&legacy, &db_path)?;
+            }
+            let conn = db::open(&db_path)?;
             app.manage(AppDb(Mutex::new(conn)));
             Ok(())
         })

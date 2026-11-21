@@ -2,6 +2,8 @@
 name = "tutine"
 version = "0.1.0"
 description = "Routine-driven todo app"
+authors = ["Tudor Bufnila"]
+license = "GPL-3.0-or-later"
 edition = "2021"
 
 [lib]
