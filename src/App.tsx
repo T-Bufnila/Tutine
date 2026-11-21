@@ -4,6 +4,7 @@ import { RoutineEditor } from "./features/routines/RoutineEditor";
 import { RoutinePreview } from "./features/routines/RoutinePreview";
 import { SettingsView } from "./features/settings/SettingsView";
 import { Sidebar } from "./features/sidebar/Sidebar";
+import { TagConfigView } from "./features/tags/TagConfigView";
 import { TodayView } from "./features/today/TodayView";
 import { useTodayActions } from "./features/today/useTodayActions";
 import { useAppData } from "./hooks/useAppData";
@@ -16,7 +17,7 @@ import { installAudioUnlock } from "./lib/sound";
 
 export default function App() {
   const data = useAppData();
-  const { routines, today, settings, error, routineActions } = data;
+  const { routines, tags, today, settings, error, routineActions } = data;
 
   const [view, setView] = useState<View>({ kind: "today" });
   const now = useClock(data.reloadToday);
@@ -42,7 +43,7 @@ export default function App() {
 
     switch (view.kind) {
       case "today":
-        return <TodayView today={today} settings={settings} now={now} actions={todayActions} />;
+        return <TodayView today={today} tags={tags} settings={settings} now={now} actions={todayActions} />;
 
       case "preview": {
         const routine = findRoutine(view.routineId);
@@ -51,6 +52,7 @@ export default function App() {
           <RoutinePreview
             key={routine.id}
             routine={routine}
+            tags={tags}
             weekday={view.weekday}
             settings={settings}
             onSelectDay={(weekday) => setView({ ...view, weekday })}
@@ -64,6 +66,7 @@ export default function App() {
           <RoutineEditor
             key={view.routineId ?? "new"}
             routine={findRoutine(view.routineId)}
+            tags={tags}
             settings={settings}
             onSave={saveRoutine}
             onCancel={() =>
@@ -78,6 +81,9 @@ export default function App() {
 
       case "history":
         return <HistoryView settings={settings} refreshKey={today} />;
+
+      case "tags":
+        return <TagConfigView tags={tags} actions={data.tagActions} />;
 
       case "settings":
         return (

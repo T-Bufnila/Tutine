@@ -3,7 +3,7 @@ import { EditIcon, PlusIcon, TrashIcon } from "../../components/Icons";
 import { PageHeader } from "../../components/PageHeader";
 import { useConfirm } from "../../components/useConfirm";
 import { fmtLongDate, isWithin } from "../../lib/time";
-import type { Settings, TodayData, Todo } from "../../lib/types";
+import type { Settings, Tag, TodayData, Todo } from "../../lib/types";
 import { BreakTodo } from "./BreakTodo";
 import { TodoForm } from "./TodoForm";
 import { TodoItem } from "./TodoItem";
@@ -12,6 +12,7 @@ import type { TodayActions } from "./useTodayActions";
 
 interface TodayViewProps {
   today: TodayData;
+  tags: Tag[];
   settings: Settings;
   now: Date;
   actions: TodayActions;
@@ -20,7 +21,7 @@ interface TodayViewProps {
 /** `null` = closed, `{}` = new temp todo, `{ todo }` = editing that todo. */
 type FormState = { todo?: Todo } | null;
 
-export function TodayView({ today, settings, now, actions }: TodayViewProps) {
+export function TodayView({ today, tags, settings, now, actions }: TodayViewProps) {
   const [form, setForm] = useState<FormState>(null);
   const [askConfirm, confirmDialog] = useConfirm();
 
@@ -64,6 +65,7 @@ export function TodayView({ today, settings, now, actions }: TodayViewProps) {
             <TodoItem
               key={todo.id}
               todo={todo}
+              tag={tags.find((t) => t.id === todo.tagId)}
               use24h={settings.use24h}
               current={isWithin(now, todo.startTime, todo.endTime)}
               onToggle={() => actions.toggle(todo)}

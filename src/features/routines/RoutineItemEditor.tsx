@@ -1,16 +1,19 @@
 import { TrashIcon } from "../../components/Icons";
-import { PALETTE } from "../../lib/constants";
-import type { RoutineItem } from "../../lib/types";
+import type { RoutineItem, Tag } from "../../lib/types";
 
 interface RoutineItemEditorProps {
   item: RoutineItem;
+  tags: Tag[];
+  conflict: boolean;
   onChange: (change: Partial<RoutineItem>) => void;
+  /** Fired when the start time field loses focus, so the list can re-sort. */
+  onStartCommitted: () => void;
   onRemove: () => void;
 }
 
-export function RoutineItemEditor({ item, onChange, onRemove }: RoutineItemEditorProps) {
+export function RoutineItemEditor({ item, tags, conflict, onChange, onStartCommitted, onRemove }: RoutineItemEditorProps) {
   return (
-    <li className="editor-item">
+    <li className={`editor-item ${conflict ? "conflict" : ""}`}>
       <input
         className="grow"
         placeholder="Title"
@@ -23,6 +26,7 @@ export function RoutineItemEditor({ item, onChange, onRemove }: RoutineItemEdito
         aria-label="Start time"
         value={item.startTime}
         onChange={(e) => onChange({ startTime: e.target.value })}
+        onBlur={onStartCommitted}
       />
       <input type="time" aria-label="End time" value={item.endTime} onChange={(e) => onChange({ endTime: e.target.value })} />
 
@@ -37,22 +41,17 @@ export function RoutineItemEditor({ item, onChange, onRemove }: RoutineItemEdito
         <span className="muted small">min break</span>
       </label>
 
-      <input
-        className="tag-input"
-        placeholder="Tag"
-        aria-label="Tag"
-        value={item.tag}
-        onChange={(e) => onChange({ tag: e.target.value })}
-      />
-
-      <span className="palette">
-        {PALETTE.map((color) => (
+      <span className="palette" role="group" aria-label="Tag">
+        {tags.length === 0 ? <span className="muted small">No tags yet. Add some in Tag config.</span> : null}
+        {tags.map((tag) => (
           <button
-            key={color}
-            className={`swatch-btn ${item.color === color ? "on" : ""}`}
-            style={{ background: color }}
-            onClick={() => onChange({ color })}
-            aria-label={`Colour ${color}`}
+            key={tag.id}
+            className={`swatch-btn ${item.tagId === tag.id ? "on" : ""}`}
+            style={{ background: tag.color }}
+            title={tag.description || tag.color}
+            aria-pressed={item.tagId === tag.id}
+            aria-label={tag.description ? `Tag ${tag.description}` : `Tag ${tag.color}`}
+            onClick={() => onChange({ tagId: item.tagId === tag.id ? null : tag.id })}
           />
         ))}
       </span>

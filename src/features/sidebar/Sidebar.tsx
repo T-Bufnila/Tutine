@@ -1,4 +1,4 @@
-import { HistoryIcon, PlusIcon, SettingsIcon, SidebarIcon, TodayIcon } from "../../components/Icons";
+import { HistoryIcon, PlusIcon, SettingsIcon, SidebarIcon, TagIcon, TodayIcon } from "../../components/Icons";
 import { useConfirm } from "../../components/useConfirm";
 import type { RoutineActions } from "../../hooks/useAppData";
 import { useStoredState } from "../../hooks/useStoredState";
@@ -93,6 +93,13 @@ export function Sidebar({ routines, today, settings, view, setView, routineActio
         collapsed={collapsed}
         selected={view.kind === "history"}
         onClick={() => setView({ kind: "history" })}
+      />
+      <NavButton
+        icon={<TagIcon />}
+        label="Tag config"
+        collapsed={collapsed}
+        selected={view.kind === "tags"}
+        onClick={() => setView({ kind: "tags" })}
       />
       <NavButton
         icon={<SettingsIcon />}

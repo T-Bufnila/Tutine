@@ -13,15 +13,14 @@ struct NewTodo<'a> {
     start_time: &'a str,
     end_time: &'a str,
     break_minutes: i64,
-    tag: &'a str,
-    color: &'a str,
+    tag_id: Option<i64>,
     done: bool,
 }
 
 fn insert(conn: &Connection, t: &NewTodo) -> Res<()> {
     conn.execute(
-        "INSERT INTO todos(date, kind, title, start_time, end_time, break_minutes, tag, color, done)
-         VALUES(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+        "INSERT INTO todos(date, kind, title, start_time, end_time, break_minutes, tag_id, done)
+         VALUES(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
         params![
             t.date,
             t.kind,
@@ -29,8 +28,7 @@ fn insert(conn: &Connection, t: &NewTodo) -> Res<()> {
             t.start_time,
             t.end_time,
             t.break_minutes,
-            t.tag,
-            t.color,
+            t.tag_id,
             t.done as i64
         ],
     )?;
@@ -45,9 +43,8 @@ fn map_todo(r: &Row) -> Res<Todo> {
         start_time: r.get(3)?,
         end_time: r.get(4)?,
         break_minutes: r.get(5)?,
-        tag: r.get(6)?,
-        color: r.get(7)?,
-        done: r.get::<_, i64>(8)? != 0,
+        tag_id: r.get(6)?,
+        done: r.get::<_, i64>(7)? != 0,
     })
 }
 
@@ -92,8 +89,7 @@ fn generate_from_routine(
                 start_time: &item.start_time,
                 end_time: &item.end_time,
                 break_minutes: item.break_minutes,
-                tag: &item.tag,
-                color: &item.color,
+                tag_id: item.tag_id,
                 done: was_done(KIND_ROUTINE, &item.title, &item.start_time),
             },
         )?;
@@ -109,8 +105,7 @@ fn generate_from_routine(
                     start_time: &item.end_time,
                     end_time: &break_end,
                     break_minutes: item.break_minutes,
-                    tag: "",
-                    color: "",
+                    tag_id: None,
                     done: was_done(KIND_BREAK, "Break", &item.end_time),
                 },
             )?;
@@ -165,9 +160,9 @@ pub fn get_today(conn: &Connection) -> Res<TodayData> {
     let active = routines::active(conn)?;
 
     let mut stmt = conn.prepare(
-        "SELECT id, kind, title, start_time, end_time, break_minutes, tag, color, done
+        "SELECT id, kind, title, start_time, end_time, break_minutes, tag_id, done
          FROM todos WHERE date = ?1
-         ORDER BY CASE WHEN start_time = '' THEN 1 ELSE 0 END, start_time, id",
+         ORDER BY CASE WHEN start_time = '' THEN 1 ELSE 0 END, start_time, end_time, id",
     )?;
     let todos = stmt.query_map([&date], map_todo)?.collect::<Res<Vec<_>>>()?;
 
@@ -209,8 +204,7 @@ pub fn add_custom(conn: &Connection, title: &str, start_time: &str, end_time: &s
             start_time,
             end_time,
             break_minutes: 0,
-            tag: "",
-            color: "",
+            tag_id: None,
             done: false,
         },
     )?;

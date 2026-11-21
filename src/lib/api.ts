@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { DEFAULT_THEME, isThemeId } from "./themes";
 import { DEFAULT_FONT, DEFAULT_FONT_SIZE, isFontId, isFontSize } from "./typography";
-import type { HistoryDay, Routine, SettingKey, Settings, Sound, TodayData } from "./types";
+import type { HistoryDay, Routine, SettingKey, Settings, Sound, Tag, TodayData } from "./types";
 
 export const DEFAULT_SOUND_ID = "builtin:chime";
 export const DEFAULT_SOUND_VOLUME = 100;
@@ -45,6 +45,13 @@ export const api = {
   deleteRoutine: (id: number) => invoke<void>("delete_routine", { id }),
   setPinned: (id: number, pinned: boolean) => invoke<void>("set_pinned", { id, pinned }),
   setActiveRoutine: (id: number | null) => invoke<void>("set_active_routine", { id }),
+
+  // Tags
+  listTags: () => invoke<Tag[]>("list_tags"),
+  addTag: (color: string, description: string) => invoke<void>("add_tag", { color, description }),
+  updateTag: (id: number, color: string, description: string) =>
+    invoke<void>("update_tag", { id, color, description }),
+  deleteTag: (id: number) => invoke<void>("delete_tag", { id }),
 
   // Today's todos
   getToday: () => invoke<TodayData>("get_today"),

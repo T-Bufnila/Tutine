@@ -9,8 +9,14 @@ export interface RoutineItem {
   startTime: string;
   endTime: string;
   breakMinutes: number;
-  tag: string;
+  tagId: number | null;
+}
+
+/** A shared colour label; the description is optional. */
+export interface Tag {
+  id: number;
   color: string;
+  description: string;
 }
 
 export interface Routine {
@@ -32,8 +38,7 @@ export interface Todo {
   startTime: string;
   endTime: string;
   breakMinutes: number;
-  tag: string;
-  color: string;
+  tagId: number | null;
   done: boolean;
 }
 
@@ -89,4 +94,5 @@ export type View =
   | { kind: "preview"; routineId: number; weekday: number }
   | { kind: "edit"; routineId: number | null }
   | { kind: "history" }
+  | { kind: "tags" }
   | { kind: "settings" };

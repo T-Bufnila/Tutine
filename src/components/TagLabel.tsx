@@ -1,10 +1,12 @@
-/** Coloured dot with an optional tag name. Renders nothing if both are empty. */
-export function TagLabel({ tag, color }: { tag: string; color: string }) {
-  if (!tag && !color) return null;
+import type { Tag } from "../lib/types";
+
+/** Tag colour dot, followed by a pill with its description when it has one. */
+export function TagLabel({ tag }: { tag: Tag | undefined }) {
+  if (!tag) return null;
   return (
     <span className="tag">
-      <i className="swatch" style={{ background: color || undefined }} />
-      {tag}
+      <i className="swatch" style={{ background: tag.color }} />
+      {tag.description ? <span className="tag-pill">{tag.description}</span> : null}
     </span>
   );
 }

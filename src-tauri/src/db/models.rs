@@ -15,8 +15,8 @@ pub struct RoutineItem {
     pub start_time: String,
     pub end_time: String,
     pub break_minutes: i64,
-    pub tag: String,
-    pub color: String,
+    #[serde(default)]
+    pub tag_id: Option<i64>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -52,9 +52,17 @@ pub struct Todo {
     pub start_time: String,
     pub end_time: String,
     pub break_minutes: i64,
-    pub tag: String,
-    pub color: String,
+    pub tag_id: Option<i64>,
     pub done: bool,
+}
+
+/// A colour label that routine items can reference; the description is optional.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Tag {
+    pub id: i64,
+    pub color: String,
+    pub description: String,
 }
 
 #[derive(Serialize)]

@@ -1,4 +1,4 @@
-use crate::db::{self, history, models, routines, settings, sounds, todos};
+use crate::db::{self, history, models, routines, settings, sounds, tags, todos};
 use percent_encoding::percent_decode_str;
 use rusqlite::Connection;
 use std::collections::HashMap;
@@ -32,6 +32,9 @@ pub fn list_routines(state: State<AppDb>) -> CmdResult<Vec<models::Routine>> {
 #[tauri::command]
 pub fn save_routine(state: State<AppDb>, routine: models::Routine) -> CmdResult<i64> {
     require(&routine.name, "Routine name is required")?;
+    if let Some(problem) = routines::find_overlap(&routine.items, routine.weeks.clamp(1, 12)) {
+        return Err(problem);
+    }
     with_db(&state, |c| routines::save(c, routine))
 }
 
@@ -48,6 +51,55 @@ pub fn set_pinned(state: State<AppDb>, id: i64, pinned: bool) -> CmdResult<()> {
 #[tauri::command]
 pub fn set_active_routine(state: State<AppDb>, id: Option<i64>) -> CmdResult<()> {
     with_db(&state, |c| routines::set_active(c, id))
+}
+
+// --- Tags -----------------------------------------------------------------
+
+const COLOR_TAKEN: &str = "Another tag already uses that colour";
+
+fn clean_tag(color: &str, description: &str) -> CmdResult<()> {
+    let valid_color = color.len() == 7
+        && color.starts_with('#')
+        && color[1..].chars().all(|c| c.is_ascii_hexdigit());
+    if !valid_color {
+        return Err("Pick a valid colour".into());
+    }
+    if description.trim().chars().count() > 60 {
+        return Err("Tag descriptions are limited to 60 characters".into());
+    }
+    Ok(())
+}
+
+#[tauri::command]
+pub fn list_tags(state: State<AppDb>) -> CmdResult<Vec<models::Tag>> {
+    with_db(&state, |c| tags::list(c))
+}
+
+#[tauri::command]
+pub fn add_tag(state: State<AppDb>, color: String, description: String) -> CmdResult<()> {
+    clean_tag(&color, &description)?;
+    let color = color.to_ascii_lowercase();
+    if with_db(&state, |c| tags::add(c, &color, &description))? {
+        Ok(())
+    } else {
+        Err(COLOR_TAKEN.into())
+    }
+}
+
+#[tauri::command]
+pub fn update_tag(state: State<AppDb>, id: i64, color: String, description: String) -> CmdResult<()> {
+    clean_tag(&color, &description)?;
+    let color = color.to_ascii_lowercase();
+    if with_db(&state, |c| tags::update(c, id, &color, &description))? {
+        Ok(())
+    } else {
+        Err(COLOR_TAKEN.into())
+    }
+}
+
+#[tauri::command]
+pub fn delete_tag(state: State<AppDb>, id: i64) -> CmdResult<()> {
+    with_db(&state, |c| tags::delete(c, id))
 }
 
 // --- Today's todos --------------------------------------------------------

@@ -1,28 +1,34 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PlusIcon } from "../../components/Icons";
 import { PageHeader } from "../../components/PageHeader";
-import { PALETTE } from "../../lib/constants";
 import { localDateString, weekdayIndex } from "../../lib/time";
-import type { Routine, RoutineItem, Settings } from "../../lib/types";
+import type { Routine, RoutineItem, Settings, Tag } from "../../lib/types";
 import { RoutineItemEditor } from "./RoutineItemEditor";
-import { createItem, validateRoutine } from "./routineUtils";
+import { createItem, findOverlaps, sortItems, validateRoutine } from "./routineUtils";
 import { ScheduleTabs } from "./ScheduleTabs";
 
 const MAX_WEEKS = 12;
 
+/** An item being edited; `key` keeps rows stable while they re-sort. */
+type DraftItem = RoutineItem & { key: number };
+
 interface RoutineEditorProps {
   routine: Routine | null;
+  tags: Tag[];
   settings: Settings;
   onSave: (routine: Routine) => void;
   onCancel: () => void;
 }
 
-export function RoutineEditor({ routine, settings, onSave, onCancel }: RoutineEditorProps) {
+export function RoutineEditor({ routine, tags, settings, onSave, onCancel }: RoutineEditorProps) {
   // --- Draft state ---------------------------------------------------------
+  const nextKey = useRef(0);
   const [name, setName] = useState(routine?.name ?? "");
   const [weeks, setWeeks] = useState(routine?.weeks ?? 1);
   const [startDate, setStartDate] = useState(routine?.startDate ?? localDateString());
-  const [items, setItems] = useState<RoutineItem[]>(routine?.items ?? []);
+  const [items, setItems] = useState<DraftItem[]>(() =>
+    (routine?.items ?? []).map((item) => ({ ...item, key: nextKey.current++ })),
+  );
   const [error, setError] = useState("");
 
   // --- Selected day --------------------------------------------------------
@@ -30,26 +36,28 @@ export function RoutineEditor({ routine, settings, onSave, onCancel }: RoutineEd
   const [weekday, setWeekday] = useState(() => weekdayIndex(new Date()));
   const shownWeek = Math.min(week, weeks - 1);
 
-  const visible = items
-    .map((item, index) => ({ item, index }))
-    .filter(({ item }) => item.weekIndex === shownWeek && item.weekday === weekday);
+  const visible = items.filter((item) => item.weekIndex === shownWeek && item.weekday === weekday);
+  const overlapping = new Set(findOverlaps(items).flatMap(([a, b]) => [items[a].key, items[b].key]));
 
   const countFor = (d: number) => items.filter((i) => i.weekIndex === shownWeek && i.weekday === d).length;
 
   // --- Item mutations ------------------------------------------------------
-  const updateItem = (index: number, change: Partial<RoutineItem>) =>
-    setItems((prev) => prev.map((it, i) => (i === index ? { ...it, ...change } : it)));
+  const updateItem = (key: number, change: Partial<RoutineItem>) =>
+    setItems((prev) => prev.map((it) => (it.key === key ? { ...it, ...change } : it)));
 
-  const removeItem = (index: number) => setItems((prev) => prev.filter((_, i) => i !== index));
+  const removeItem = (key: number) => setItems((prev) => prev.filter((it) => it.key !== key));
+
+  /** Re-sorts once the start time is committed, so rows don't jump while typing. */
+  const reorder = () => setItems((prev) => sortItems(prev));
 
   const addItem = () => {
-    const previous = visible[visible.length - 1]?.item;
-    setItems((prev) => [...prev, createItem(shownWeek, weekday, previous, PALETTE[0])]);
+    const latest = visible.reduce<DraftItem | undefined>((a, b) => (a && a.startTime > b.startTime ? a : b), undefined);
+    setItems((prev) => sortItems([...prev, { ...createItem(shownWeek, weekday, latest), key: nextKey.current++ }]));
   };
 
   // --- Save ----------------------------------------------------------------
   const save = () => {
-    const kept = items.filter((i) => i.weekIndex < weeks);
+    const kept = sortItems(items.filter((i) => i.weekIndex < weeks)).map(({ key: _key, ...item }) => item);
     const problem = validateRoutine(name, kept);
     if (problem) {
       setError(problem);
@@ -120,13 +128,19 @@ export function RoutineEditor({ routine, settings, onSave, onCancel }: RoutineEd
       </div>
 
       {visible.length === 0 ? <p className="empty">Nothing scheduled. Add an item with +</p> : null}
+      {visible.some((i) => overlapping.has(i.key)) ? (
+        <p className="error">Highlighted items overlap. An item and its break must finish before the next one starts.</p>
+      ) : null}
       <ul className="editor-items">
-        {visible.map(({ item, index }) => (
+        {visible.map((item) => (
           <RoutineItemEditor
-            key={index}
+            key={item.key}
             item={item}
-            onChange={(change) => updateItem(index, change)}
-            onRemove={() => removeItem(index)}
+            tags={tags}
+            conflict={overlapping.has(item.key)}
+            onChange={(change) => updateItem(item.key, change)}
+            onStartCommitted={reorder}
+            onRemove={() => removeItem(item.key)}
           />
         ))}
       </ul>

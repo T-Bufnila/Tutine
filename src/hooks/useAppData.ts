@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, DEFAULT_SETTINGS } from "../lib/api";
-import type { Routine, SettingKey, Settings, TodayData } from "../lib/types";
+import type { Routine, SettingKey, Settings, Tag, TodayData } from "../lib/types";
 
 /** Owns all data loaded from the Rust backend plus the actions that mutate it. */
 export function useAppData() {
   const [routines, setRoutines] = useState<Routine[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [today, setToday] = useState<TodayData | null>(null);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [error, setError] = useState("");
@@ -25,14 +26,16 @@ export function useAppData() {
   }, []);
 
   const reloadAll = useCallback(async () => {
-    const [nextToday, nextRoutines, nextSettings] = await Promise.all([
+    const [nextToday, nextRoutines, nextSettings, nextTags] = await Promise.all([
       api.getToday(),
       api.listRoutines(),
       api.getSettings(),
+      api.listTags(),
     ]);
     setToday(nextToday);
     setRoutines(nextRoutines);
     setSettings(nextSettings);
+    setTags(nextTags);
   }, []);
 
   useEffect(() => {
@@ -66,6 +69,27 @@ export function useAppData() {
     [run, reloadAll],
   );
 
+  const tagActions = useMemo(
+    () => ({
+      add: (color: string, description: string) =>
+        run(async () => {
+          await api.addTag(color, description);
+          await reloadAll();
+        }),
+      update: (id: number, color: string, description: string) =>
+        run(async () => {
+          await api.updateTag(id, color, description);
+          await reloadAll();
+        }),
+      remove: (id: number) =>
+        run(async () => {
+          await api.deleteTag(id);
+          await reloadAll();
+        }),
+    }),
+    [run, reloadAll],
+  );
+
   const updateSetting = useCallback(
     (key: SettingKey, value: string) =>
       run(async () => {
@@ -75,8 +99,9 @@ export function useAppData() {
     [run, reloadAll],
   );
 
-  return { routines, today, settings, error, run, reloadToday, reloadAll, routineActions, updateSetting };
+  return { routines, tags, today, settings, error, run, reloadToday, reloadAll, routineActions, tagActions, updateSetting };
 }
 
 export type AppData = ReturnType<typeof useAppData>;
 export type RoutineActions = AppData["routineActions"];
+export type TagActions = AppData["tagActions"];

@@ -3,6 +3,7 @@ use super::{settings, time, Res};
 use rusqlite::{params, Connection, OptionalExtension, Row};
 
 const MAX_WEEKS: i64 = 12;
+const WEEKDAYS: [&str; 7] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 fn map_item(r: &Row) -> Res<RoutineItem> {
     Ok(RoutineItem {
@@ -13,14 +14,13 @@ fn map_item(r: &Row) -> Res<RoutineItem> {
         start_time: r.get(4)?,
         end_time: r.get(5)?,
         break_minutes: r.get(6)?,
-        tag: r.get(7)?,
-        color: r.get(8)?,
+        tag_id: r.get(7)?,
     })
 }
 
 pub fn load_items(conn: &Connection, routine_id: i64) -> Res<Vec<RoutineItem>> {
     let mut stmt = conn.prepare(
-        "SELECT id, week_index, weekday, title, start_time, end_time, break_minutes, tag, color
+        "SELECT id, week_index, weekday, title, start_time, end_time, break_minutes, tag_id
          FROM routine_items WHERE routine_id = ?1
          ORDER BY week_index, weekday, start_time, id",
     )?;
@@ -62,6 +62,40 @@ fn is_valid_item(item: &RoutineItem, weeks: i64) -> bool {
     (0..weeks).contains(&item.week_index) && (0..7).contains(&item.weekday)
 }
 
+fn minutes(time: &str) -> Option<i64> {
+    let (h, m) = time.split_once(':')?;
+    Some(h.parse::<i64>().ok()? * 60 + m.parse::<i64>().ok()?)
+}
+
+/// Describes the first pair of items on the same day whose time (including the
+/// break after each) overlaps. Items with unparseable times are ignored.
+pub fn find_overlap(items: &[RoutineItem], weeks: i64) -> Option<String> {
+    const LAST_MINUTE: i64 = 23 * 60 + 59;
+    let mut spans: Vec<(i64, i64, i64, &RoutineItem)> = items
+        .iter()
+        .filter(|i| is_valid_item(i, weeks))
+        .filter_map(|i| {
+            let start = minutes(&i.start_time)?;
+            let end = (minutes(&i.end_time)? + i.break_minutes.max(0)).min(LAST_MINUTE);
+            Some((i.week_index * 7 + i.weekday, start, end, i))
+        })
+        .collect();
+    spans.sort_by_key(|s| (s.0, s.1));
+
+    spans.windows(2).find_map(|pair| {
+        let (day, _, end, first) = pair[0];
+        let (next_day, next_start, _, second) = pair[1];
+        (day == next_day && next_start < end).then(|| {
+            format!(
+                "\"{}\" and \"{}\" overlap on {}.",
+                first.title.trim(),
+                second.title.trim(),
+                WEEKDAYS[first.weekday as usize]
+            )
+        })
+    })
+}
+
 /// Inserts or replaces a routine and all of its items. Returns the routine id.
 pub fn save(conn: &mut Connection, routine: Routine) -> Res<i64> {
     let weeks = routine.weeks.clamp(1, MAX_WEEKS);
@@ -89,8 +123,8 @@ pub fn save(conn: &mut Connection, routine: Routine) -> Res<i64> {
     for item in routine.items.iter().filter(|i| is_valid_item(i, weeks)) {
         tx.execute(
             "INSERT INTO routine_items
-                (routine_id, week_index, weekday, title, start_time, end_time, break_minutes, tag, color)
-             VALUES(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+                (routine_id, week_index, weekday, title, start_time, end_time, break_minutes, tag_id)
+             VALUES(?1, ?2, ?3, ?4, ?5, ?6, ?7, (SELECT id FROM tags WHERE id = ?8))",
             params![
                 id,
                 item.week_index,
@@ -99,8 +133,7 @@ pub fn save(conn: &mut Connection, routine: Routine) -> Res<i64> {
                 item.start_time,
                 item.end_time,
                 item.break_minutes.max(0),
-                item.tag.trim(),
-                item.color
+                item.tag_id
             ],
         )?;
     }

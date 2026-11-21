@@ -10,6 +10,7 @@ import "./styles/controls.css";
 import "./styles/layout.css";
 import "./styles/todos.css";
 import "./styles/routines.css";
+import "./styles/tags.css";
 import "./styles/settings.css";
 import "./styles/history.css";
 

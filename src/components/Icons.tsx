@@ -82,6 +82,12 @@ export const HistoryIcon = () => (
     <rect x="14" y="14" width="7" height="7" />
   </Svg>
 );
+export const TagIcon = () => (
+  <Svg>
+    <path d="M3 12V4h8l10 10-8 8z" />
+    <circle cx="7.5" cy="8.5" r="1.2" />
+  </Svg>
+);
 export const SettingsIcon = () => (
   <Svg>
     <path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h12M20 18h0" />
