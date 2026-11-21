@@ -1,11 +1,11 @@
 [package]
-name = "rutine"
+name = "tutine"
 version = "0.1.0"
 description = "Routine-driven todo app"
 edition = "2021"
 
 [lib]
-name = "rutine_lib"
+name = "tutine_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

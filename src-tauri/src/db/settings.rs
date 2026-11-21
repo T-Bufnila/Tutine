@@ -6,8 +6,15 @@ pub const ACTIVE_ROUTINE: &str = "active_routine";
 pub const WEEK_START: &str = "week_start";
 pub const SOUND_ENABLED: &str = "sound_enabled";
 pub const SOUND_ID: &str = "sound_id";
+pub const SOUND_VOLUME: &str = "sound_volume";
 pub const DEFAULT_SOUND_ID: &str = "builtin:chime";
 pub const THEME: &str = "theme";
+pub const FONT_FAMILY: &str = "font_family";
+pub const FONT_SIZE: &str = "font_size";
+
+/// Keep in sync with src/lib/typography.ts.
+pub const FONT_FAMILIES: [&str; 4] = ["system", "readable", "serif", "mono"];
+pub const FONT_SIZES: [&str; 3] = ["small", "default", "large"];
 
 /// Theme ids the UI can select; keep in sync with src/lib/themes.ts.
 pub const THEMES: [&str; 9] = [
@@ -28,7 +35,17 @@ pub const GEN_ROUTINE: &str = "gen_routine";
 pub const GEN_DIRTY: &str = "gen_dirty";
 
 /// Settings the frontend is allowed to change.
-pub const USER_KEYS: [&str; 6] = ["notifications", "time_format", WEEK_START, SOUND_ENABLED, SOUND_ID, THEME];
+pub const USER_KEYS: [&str; 9] = [
+    "notifications",
+    "time_format",
+    WEEK_START,
+    SOUND_ENABLED,
+    SOUND_ID,
+    SOUND_VOLUME,
+    THEME,
+    FONT_FAMILY,
+    FONT_SIZE,
+];
 
 pub fn get(conn: &Connection, key: &str) -> Res<String> {
     Ok(conn
@@ -65,6 +82,26 @@ pub fn list_user(conn: &Connection) -> Res<HashMap<String, String>> {
         }
     }
     Ok(out)
+}
+
+/// Rejects unknown keys and values the UI could never produce.
+pub fn validate_user(key: &str, value: &str) -> Result<(), String> {
+    let valid = match key {
+        "notifications" | SOUND_ENABLED => ["0", "1"].contains(&value),
+        "time_format" => ["12", "24"].contains(&value),
+        WEEK_START => ["mon", "sun"].contains(&value),
+        SOUND_ID => value.starts_with("builtin:") || value.starts_with("custom:"),
+        SOUND_VOLUME => value.parse::<u8>().is_ok_and(|v| v <= 100),
+        THEME => THEMES.contains(&value),
+        FONT_FAMILY => FONT_FAMILIES.contains(&value),
+        FONT_SIZE => FONT_SIZES.contains(&value),
+        _ => return Err("Unknown setting".into()),
+    };
+    if valid {
+        Ok(())
+    } else {
+        Err(format!("Invalid value for {key}"))
+    }
 }
 
 pub fn update_user(conn: &Connection, key: &str, value: &str) -> Res<()> {

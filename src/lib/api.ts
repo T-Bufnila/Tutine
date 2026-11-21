@@ -1,8 +1,10 @@
 import { invoke } from "@tauri-apps/api/core";
 import { DEFAULT_THEME, isThemeId } from "./themes";
+import { DEFAULT_FONT, DEFAULT_FONT_SIZE, isFontId, isFontSize } from "./typography";
 import type { HistoryDay, Routine, SettingKey, Settings, Sound, TodayData } from "./types";
 
 export const DEFAULT_SOUND_ID = "builtin:chime";
+export const DEFAULT_SOUND_VOLUME = 100;
 
 export const DEFAULT_SETTINGS: Settings = {
   notifications: true,
@@ -10,8 +12,16 @@ export const DEFAULT_SETTINGS: Settings = {
   weekStart: "mon",
   soundEnabled: true,
   soundId: DEFAULT_SOUND_ID,
+  soundVolume: DEFAULT_SOUND_VOLUME,
   theme: DEFAULT_THEME,
+  fontFamily: DEFAULT_FONT,
+  fontSize: DEFAULT_FONT_SIZE,
 };
+
+function parseVolume(raw: string | undefined): number {
+  const value = Number(raw);
+  return raw && Number.isFinite(value) ? Math.min(Math.max(Math.round(value), 0), 100) : DEFAULT_SOUND_VOLUME;
+}
 
 function parseSettings(raw: Record<string, string>): Settings {
   return {
@@ -20,7 +30,10 @@ function parseSettings(raw: Record<string, string>): Settings {
     weekStart: raw.week_start === "sun" ? "sun" : "mon",
     soundEnabled: raw.sound_enabled !== "0",
     soundId: raw.sound_id || DEFAULT_SOUND_ID,
+    soundVolume: parseVolume(raw.sound_volume),
     theme: raw.theme && isThemeId(raw.theme) ? raw.theme : DEFAULT_THEME,
+    fontFamily: raw.font_family && isFontId(raw.font_family) ? raw.font_family : DEFAULT_FONT,
+    fontSize: raw.font_size && isFontSize(raw.font_size) ? raw.font_size : DEFAULT_FONT_SIZE,
   };
 }
 

@@ -3,6 +3,7 @@ import {
   applyResolvedTheme,
   cacheTheme,
   resolveTheme,
+  syncWindowTheme,
   systemPrefersDark,
   watchSystemTheme,
 } from "../lib/themes";
@@ -12,6 +13,7 @@ import type { ThemeId } from "../lib/themes";
 export function useTheme(theme: ThemeId) {
   useEffect(() => {
     cacheTheme(theme);
+    syncWindowTheme(theme);
     applyResolvedTheme(resolveTheme(theme, systemPrefersDark()));
     if (theme !== "system") return;
     return watchSystemTheme((dark) => applyResolvedTheme(resolveTheme(theme, dark)));

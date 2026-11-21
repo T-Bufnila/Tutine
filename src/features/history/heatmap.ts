@@ -4,7 +4,7 @@ import type { HistoryDay, WeekStart } from "../../lib/types";
 
 export type HistoryMap = Map<string, HistoryDay>;
 
-export interface HeatCell {
+interface HeatCell {
   date: string;
   day: HistoryDay | undefined;
   future: boolean;

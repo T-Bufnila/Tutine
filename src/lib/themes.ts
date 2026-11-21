@@ -1,3 +1,5 @@
+import { getCurrentWindow } from "@tauri-apps/api/window";
+
 export type ThemeId =
   | "system"
   | "dark"
@@ -10,9 +12,9 @@ export type ThemeId =
   | "solarized-light";
 
 /** A concrete theme; "system" resolves to one of these. */
-export type ResolvedTheme = Exclude<ThemeId, "system">;
+type ResolvedTheme = Exclude<ThemeId, "system">;
 
-export interface ThemeOption {
+interface ThemeOption {
   id: ThemeId;
   name: string;
 }
@@ -57,6 +59,18 @@ export function watchSystemTheme(listener: (dark: boolean) => void): () => void 
 
 export function applyResolvedTheme(theme: ResolvedTheme) {
   document.documentElement.dataset.theme = theme;
+}
+
+const LIGHT_THEMES = new Set<ResolvedTheme>(["light", "gruvbox-light", "solarized-light"]);
+
+/** Matches the native title bar to the theme; `null` lets the OS decide. */
+export function syncWindowTheme(theme: ThemeId) {
+  const value = theme === "system" ? null : LIGHT_THEMES.has(theme) ? "light" : "dark";
+  getCurrentWindow()
+    .setTheme(value)
+    .catch(() => {
+      // Not supported on every platform (e.g. some Linux desktops); purely cosmetic.
+    });
 }
 
 /**

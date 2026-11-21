@@ -1,4 +1,4 @@
-export interface TabItem<T> {
+interface TabItem<T> {
   value: T;
   label: string;
   badge?: number;

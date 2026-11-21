@@ -1,5 +1,8 @@
 import type { SettingKey, Settings } from "../../lib/types";
+import { FONT_SIZE_OPTIONS } from "../../lib/typography";
+import { Tabs } from "../../components/Tabs";
 import { AlertSettings } from "./AlertSettings";
+import { FontPicker } from "./FontPicker";
 import { SettingRow, SettingsSection } from "./SettingRow";
 import { SoundLibrary } from "./SoundLibrary";
 import { ThemePicker } from "./ThemePicker";
@@ -19,10 +22,21 @@ export function SettingsView({ settings, onChange, onTestAlert, onSoundsChanged 
       </header>
 
       <SettingsSection title="Appearance">
-        <div className="theme-setting">
+        <div className="setting-block">
           <strong>Colour theme</strong>
           <div className="muted small">"System" switches between Light and Dark with your operating system.</div>
           <ThemePicker value={settings.theme} onChange={(theme) => onChange("theme", theme)} />
+        </div>
+      </SettingsSection>
+
+      <SettingsSection title="Accessibility">
+        <SettingRow title="Text size" description="Scales all text in the app.">
+          <Tabs items={FONT_SIZE_OPTIONS} value={settings.fontSize} onChange={(size) => onChange("font_size", size)} />
+        </SettingRow>
+        <div className="setting-block">
+          <strong>Font</strong>
+          <div className="muted small">Pick the typeface that is easiest for you to read.</div>
+          <FontPicker value={settings.fontFamily} onChange={(font) => onChange("font_family", font)} />
         </div>
       </SettingsSection>
 
@@ -30,6 +44,7 @@ export function SettingsView({ settings, onChange, onTestAlert, onSoundsChanged 
         <AlertSettings settings={settings} onChange={onChange} onTestAlert={onTestAlert} />
         <SoundLibrary
           selectedId={settings.soundId}
+          volume={settings.soundVolume}
           onSelect={(id) => onChange("sound_id", id)}
           onSoundsChanged={onSoundsChanged}
         />

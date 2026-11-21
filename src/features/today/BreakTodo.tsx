@@ -1,6 +1,6 @@
+import { BreakHeader } from "../../components/BreakHeader";
 import { CheckButton } from "../../components/CheckButton";
 import type { BreakTimerState } from "../../hooks/useBreakTimers";
-import { fmtRange } from "../../lib/time";
 import type { Todo } from "../../lib/types";
 import { BreakTimer } from "./BreakTimer";
 
@@ -21,14 +21,9 @@ export function BreakTodo({ todo, timer, use24h, locked, onToggle, onStart, onPa
 
   return (
     <li className={`todo break ${state}`}>
-      <div className="break-head">
-        <div className="todo-main">
-          <span className="todo-title">Break</span>
-          <span className="muted small">{todo.breakMinutes} min</span>
-        </div>
-        <span className="time">{fmtRange(todo.startTime, todo.endTime, use24h)}</span>
+      <BreakHeader minutes={todo.breakMinutes} startTime={todo.startTime} endTime={todo.endTime} use24h={use24h}>
         <CheckButton checked={todo.done} onToggle={onToggle} size="small" />
-      </div>
+      </BreakHeader>
 
       <div className={`break-expand ${state === "ready" ? "open" : ""}`} inert={state !== "ready"}>
         <div className="break-expand-inner">

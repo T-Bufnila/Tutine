@@ -11,6 +11,8 @@ const MAX_BYTES = 5 * 1024 * 1024;
 
 interface SoundLibraryProps {
   selectedId: string;
+  /** 0-100, used for previews. */
+  volume: number;
   onSelect: (soundId: string) => void;
   /** Called after a sound is deleted, since that can reset the selected sound. */
   onSoundsChanged: () => void;
@@ -19,7 +21,7 @@ interface SoundLibraryProps {
 /** What the naming dialog is currently for. */
 type NameDialog = { kind: "upload"; file: File } | { kind: "rename"; sound: Sound } | null;
 
-export function SoundLibrary({ selectedId, onSelect, onSoundsChanged }: SoundLibraryProps) {
+export function SoundLibrary({ selectedId, volume, onSelect, onSoundsChanged }: SoundLibraryProps) {
   const { sounds, error, setError, add, rename, remove } = useSounds();
   const [dialog, setDialog] = useState<NameDialog>(null);
   const [askConfirm, confirmDialog] = useConfirm();
@@ -41,7 +43,7 @@ export function SoundLibrary({ selectedId, onSelect, onSoundsChanged }: SoundLib
       if (created) {
         const id = `custom:${created.id}`;
         onSelect(id);
-        playSound(id);
+        playSound(id, volume);
       }
     } else if (dialog?.kind === "rename") {
       await rename(dialog.sound.id, name);
@@ -83,7 +85,7 @@ export function SoundLibrary({ selectedId, onSelect, onSoundsChanged }: SoundLib
               {entry.custom ? null : <span className="muted small">Built-in</span>}
             </label>
             <span className="actions">
-              <button className="icon accent" title="Preview" onClick={() => playSound(entry.id)}>
+              <button className="icon accent" title="Preview" onClick={() => playSound(entry.id, volume)}>
                 <PlayIcon />
               </button>
               {entry.custom ? (

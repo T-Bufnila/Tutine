@@ -99,16 +99,7 @@ pub fn get_settings(state: State<AppDb>) -> CmdResult<HashMap<String, String>> {
 
 #[tauri::command]
 pub fn set_setting(state: State<AppDb>, key: String, value: String) -> CmdResult<()> {
-    if !settings::USER_KEYS.contains(&key.as_str()) {
-        return Err("Unknown setting".into());
-    }
-    let valid_sound = value.starts_with("builtin:") || value.starts_with("custom:");
-    if key == settings::SOUND_ID && !valid_sound {
-        return Err("Unknown sound".into());
-    }
-    if key == settings::THEME && !settings::THEMES.contains(&value.as_str()) {
-        return Err("Unknown theme".into());
-    }
+    settings::validate_user(&key, &value)?;
     with_db(&state, |c| settings::update_user(c, &key, &value))
 }
 

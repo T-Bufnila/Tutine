@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Modal, ModalActions } from "../../components/Modal";
 
-export interface TodoFormValues {
+interface TodoFormValues {
   title: string;
   startTime: string;
   endTime: string;

@@ -9,13 +9,13 @@ interface ThemePickerProps {
 /** Each card sets its own `data-theme`, so it previews itself with that theme's colours. */
 export function ThemePicker({ value, onChange }: ThemePickerProps) {
   return (
-    <div className="theme-grid" role="radiogroup" aria-label="Colour theme">
+    <div className="option-grid" role="radiogroup" aria-label="Colour theme">
       {THEME_OPTIONS.map((option) => (
         <button
           key={option.id}
           role="radio"
           aria-checked={value === option.id}
-          className={`theme-card ${value === option.id ? "selected" : ""}`}
+          className={`option-card theme-card ${value === option.id ? "selected" : ""}`}
           // "system" previews as the OS theme; the card itself just shows a split preview.
           data-theme={option.id === "system" ? undefined : option.id}
           onClick={() => onChange(option.id)}

@@ -10,6 +10,7 @@ import { useAppData } from "./hooks/useAppData";
 import { useAlert, useDueAlerts } from "./hooks/useAlerts";
 import { useClock } from "./hooks/useClock";
 import { useTheme } from "./hooks/useTheme";
+import { useTypography } from "./hooks/useTypography";
 import type { Routine, View } from "./lib/types";
 import { installAudioUnlock } from "./lib/sound";
 
@@ -20,6 +21,7 @@ export default function App() {
   const [view, setView] = useState<View>({ kind: "today" });
   const now = useClock(data.reloadToday);
   useTheme(settings.theme);
+  useTypography(settings.fontFamily, settings.fontSize);
   const raiseAlert = useAlert(settings);
   const todayActions = useTodayActions({ ...data, alert: raiseAlert });
   useDueAlerts(today, settings, raiseAlert);
@@ -82,7 +84,7 @@ export default function App() {
           <SettingsView
             settings={settings}
             onChange={data.updateSetting}
-            onTestAlert={() => raiseAlert("Rutine", "This is how a due todo will alert you.")}
+            onTestAlert={() => raiseAlert("Tutine", "This is how a due todo will alert you.")}
             onSoundsChanged={data.reloadAll}
           />
         );

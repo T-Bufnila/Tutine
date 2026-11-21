@@ -1,4 +1,5 @@
 import type { ThemeId } from "./themes";
+import type { FontId, FontSize } from "./typography";
 
 export interface RoutineItem {
   id?: number;
@@ -22,11 +23,10 @@ export interface Routine {
   items: RoutineItem[];
 }
 
-export type TodoKind = "routine" | "break" | "custom";
+type TodoKind = "routine" | "break" | "custom";
 
 export interface Todo {
   id: number;
-  date: string;
   kind: TodoKind;
   title: string;
   startTime: string;
@@ -42,7 +42,6 @@ export interface TodayData {
   weekday: number;
   activeRoutineId: number | null;
   activeRoutineName: string | null;
-  weekIndex: number;
   todos: Todo[];
 }
 
@@ -61,7 +60,11 @@ export interface Settings {
   soundEnabled: boolean;
   /** `builtin:<name>` or `custom:<id>`. */
   soundId: string;
+  /** 0-100. */
+  soundVolume: number;
   theme: ThemeId;
+  fontFamily: FontId;
+  fontSize: FontSize;
 }
 
 export type SettingKey =
@@ -70,7 +73,10 @@ export type SettingKey =
   | "week_start"
   | "sound_enabled"
   | "sound_id"
-  | "theme";
+  | "sound_volume"
+  | "theme"
+  | "font_family"
+  | "font_size";
 
 /** An uploaded alert sound; the audio itself is fetched on demand. */
 export interface Sound {

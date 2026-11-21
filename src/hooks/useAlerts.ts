@@ -15,9 +15,9 @@ export function useAlert(settings: Settings): AlertFn {
 
   return useCallback<AlertFn>(
     (title, body) => {
-      const { notifications, soundEnabled, soundId } = settingsRef.current;
+      const { notifications, soundEnabled, soundId, soundVolume } = settingsRef.current;
       if (notifications) notify(title, body);
-      if (soundEnabled) playSound(soundId);
+      if (soundEnabled) playSound(soundId, soundVolume);
     },
     [settingsRef],
   );

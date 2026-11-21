@@ -25,7 +25,7 @@ export function toMinutes(t: string): number {
   return h * 60 + m;
 }
 
-export function fromMinutes(total: number): string {
+function fromMinutes(total: number): string {
   const clamped = Math.min(Math.max(total, 0), LAST_MINUTE);
   return `${pad(Math.floor(clamped / 60))}:${pad(clamped % 60)}`;
 }
@@ -46,7 +46,7 @@ export function isWithin(now: Date, start: string, end: string): boolean {
 
 // --- Formatting --------------------------------------------------------------
 
-export function fmtTime(t: string, use24h: boolean): string {
+function fmtTime(t: string, use24h: boolean): string {
   if (!t || use24h) return t;
   const [h, m] = t.split(":").map(Number);
   return `${h % 12 || 12}:${pad(m)} ${h >= 12 ? "PM" : "AM"}`;

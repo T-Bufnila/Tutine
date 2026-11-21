@@ -1,6 +1,6 @@
 import { api, DEFAULT_SOUND_ID } from "./api";
 
-export interface BuiltinSound {
+interface BuiltinSound {
   id: string;
   name: string;
 }
@@ -16,7 +16,7 @@ export const BUILTIN_SOUNDS: BuiltinSound[] = [
 const MAX_PLAY_SECONDS = 15;
 
 let context: AudioContext | null = null;
-let current: { stop: () => void } | null = null;
+let current: Playback | null = null;
 const decodedCustom = new Map<number, AudioBuffer>();
 
 // --- Audio permission --------------------------------------------------------
@@ -66,7 +66,24 @@ interface Tone {
   gain?: number;
 }
 
-function schedule(ctx: AudioContext, tones: Tone[]): { stop: () => void } {
+interface Playback {
+  stop: () => void;
+}
+
+function stoppable(nodes: AudioScheduledSourceNode[]): Playback {
+  return {
+    stop: () =>
+      nodes.forEach((node) => {
+        try {
+          node.stop();
+        } catch {
+          // Already finished.
+        }
+      }),
+  };
+}
+
+function schedule(ctx: AudioContext, out: AudioNode, tones: Tone[]): Playback {
   const nodes: OscillatorNode[] = [];
   const t0 = ctx.currentTime + 0.02;
 
@@ -78,21 +95,13 @@ function schedule(ctx: AudioContext, tones: Tone[]): { stop: () => void } {
     amp.gain.setValueAtTime(0.0001, t0 + start);
     amp.gain.exponentialRampToValueAtTime(gain, t0 + start + 0.02);
     amp.gain.exponentialRampToValueAtTime(0.0001, t0 + start + duration);
-    osc.connect(amp).connect(ctx.destination);
+    osc.connect(amp).connect(out);
     osc.start(t0 + start);
     osc.stop(t0 + start + duration + 0.05);
     nodes.push(osc);
   }
 
-  return {
-    stop: () => nodes.forEach((n) => {
-      try {
-        n.stop();
-      } catch {
-        // Already finished.
-      }
-    }),
-  };
+  return stoppable(nodes);
 }
 
 const builtinTones: Record<string, Tone[]> = {
@@ -129,43 +138,35 @@ export function forgetCustomSound(id: number) {
   decodedCustom.delete(id);
 }
 
-function playBuffer(ctx: AudioContext, buffer: AudioBuffer): { stop: () => void } {
+function playBuffer(ctx: AudioContext, out: AudioNode, buffer: AudioBuffer): Playback {
   const source = ctx.createBufferSource();
   source.buffer = buffer;
-  source.connect(ctx.destination);
+  source.connect(out);
   source.start();
   source.stop(ctx.currentTime + Math.min(buffer.duration, MAX_PLAY_SECONDS));
-  return {
-    stop: () => {
-      try {
-        source.stop();
-      } catch {
-        // Already finished.
-      }
-    },
-  };
+  return stoppable([source]);
 }
 
 // --- Public API ------------------------------------------------------------------
 
-/** Plays a built-in or custom sound, falling back to the default chime. */
-export async function playSound(soundId: string): Promise<void> {
+/** Plays a built-in or custom sound at `volume` (0-100), falling back to the default chime. */
+export async function playSound(soundId: string, volume: number): Promise<void> {
   const ctx = getContext();
   if (ctx.state === "suspended") await ctx.resume().catch(() => {});
   current?.stop();
 
+  // Squared so the slider feels even to the ear.
+  const master = ctx.createGain();
+  master.gain.value = (Math.min(Math.max(volume, 0), 100) / 100) ** 2;
+  master.connect(ctx.destination);
+
   if (soundId.startsWith("custom:")) {
     try {
-      current = playBuffer(ctx, await loadCustom(Number(soundId.slice("custom:".length))));
+      current = playBuffer(ctx, master, await loadCustom(Number(soundId.slice("custom:".length))));
       return;
     } catch {
       // Missing or undecodable: fall through to the default sound.
     }
   }
-  current = schedule(ctx, builtinTones[soundId] ?? builtinTones[DEFAULT_SOUND_ID]);
-}
-
-export function stopSound() {
-  current?.stop();
-  current = null;
+  current = schedule(ctx, master, builtinTones[soundId] ?? builtinTones[DEFAULT_SOUND_ID]);
 }

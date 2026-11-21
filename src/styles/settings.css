@@ -9,7 +9,7 @@
   padding-bottom: 4px;
   border-bottom: 1px solid var(--border);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 0.8rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -23,24 +23,27 @@
   border-bottom: 1px solid var(--border);
 }
 
-/* --- Theme picker -------------------------------------------------------- */
+/* --- Option pickers (theme, font) --------------------------------------- */
 
-.theme-setting {
+.setting-block {
   display: flex;
   flex-direction: column;
   gap: 4px;
   padding: 16px 0;
 }
-.theme-grid {
+.setting .tabs {
+  margin-bottom: 0;
+  flex-wrap: nowrap;
+}
+.option-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 10px;
   margin-top: 10px;
 }
-.theme-card {
+.option-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
   padding: 10px;
   background: var(--surface);
   color: var(--text);
@@ -48,11 +51,17 @@
   border-radius: 10px;
   text-align: left;
 }
-.theme-card.selected {
+.option-card.selected {
   border-color: var(--accent);
 }
+
+/* --- Theme cards --------------------------------------------------------- */
+
+.theme-card {
+  gap: 8px;
+}
 .theme-name {
-  font-size: 12px;
+  font-size: 0.86rem;
 }
 .theme-preview {
   position: relative;
@@ -109,6 +118,46 @@
   margin: 8px;
   border-radius: 50%;
   background: var(--accent);
+}
+
+/* --- Font cards ---------------------------------------------------------- */
+
+.font-card {
+  gap: 2px;
+  font-family: var(--font-family);
+}
+.font-sample {
+  font-size: 1.86rem;
+  line-height: 1.2;
+}
+.font-name {
+  font-weight: 600;
+}
+
+/* --- Volume slider ------------------------------------------------------- */
+
+.volume {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.volume input[type="range"] {
+  width: 180px;
+  padding: 0;
+  background: none;
+  border: none;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.volume input[type="range"]:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.volume output {
+  min-width: 3.5ch;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 /* --- Permission status --------------------------------------------------- */

@@ -47,7 +47,6 @@ pub struct ActiveRoutine {
 #[serde(rename_all = "camelCase")]
 pub struct Todo {
     pub id: i64,
-    pub date: String,
     pub kind: String,
     pub title: String,
     pub start_time: String,
@@ -65,7 +64,6 @@ pub struct TodayData {
     pub weekday: i64,
     pub active_routine_id: Option<i64>,
     pub active_routine_name: Option<String>,
-    pub week_index: i64,
     pub todos: Vec<Todo>,
 }
 

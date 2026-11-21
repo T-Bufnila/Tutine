@@ -40,15 +40,14 @@ fn insert(conn: &Connection, t: &NewTodo) -> Res<()> {
 fn map_todo(r: &Row) -> Res<Todo> {
     Ok(Todo {
         id: r.get(0)?,
-        date: r.get(1)?,
-        kind: r.get(2)?,
-        title: r.get(3)?,
-        start_time: r.get(4)?,
-        end_time: r.get(5)?,
-        break_minutes: r.get(6)?,
-        tag: r.get(7)?,
-        color: r.get(8)?,
-        done: r.get::<_, i64>(9)? != 0,
+        kind: r.get(1)?,
+        title: r.get(2)?,
+        start_time: r.get(3)?,
+        end_time: r.get(4)?,
+        break_minutes: r.get(5)?,
+        tag: r.get(6)?,
+        color: r.get(7)?,
+        done: r.get::<_, i64>(8)? != 0,
     })
 }
 
@@ -164,14 +163,9 @@ pub fn get_today(conn: &Connection) -> Res<TodayData> {
     let today = time::today();
     let date = time::fmt_date(today);
     let active = routines::active(conn)?;
-    let sunday = settings::sunday_start(conn)?;
-    let week_index = active
-        .as_ref()
-        .map(|a| time::current_week(&a.start_date, a.weeks, sunday))
-        .unwrap_or(0);
 
     let mut stmt = conn.prepare(
-        "SELECT id, date, kind, title, start_time, end_time, break_minutes, tag, color, done
+        "SELECT id, kind, title, start_time, end_time, break_minutes, tag, color, done
          FROM todos WHERE date = ?1
          ORDER BY CASE WHEN start_time = '' THEN 1 ELSE 0 END, start_time, id",
     )?;
@@ -182,7 +176,6 @@ pub fn get_today(conn: &Connection) -> Res<TodayData> {
         weekday: time::weekday_index(today),
         active_routine_id: active.as_ref().map(|a| a.id),
         active_routine_name: active.map(|a| a.name),
-        week_index,
         todos,
     })
 }

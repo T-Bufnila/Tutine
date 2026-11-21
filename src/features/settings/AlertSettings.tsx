@@ -3,6 +3,7 @@ import { useNotificationPermission } from "../../hooks/useNotificationPermission
 import { playSound } from "../../lib/sound";
 import type { SettingKey, Settings } from "../../lib/types";
 import { PermissionStatus, SettingRow } from "./SettingRow";
+import { VolumeSlider } from "./VolumeSlider";
 
 interface AlertSettingsProps {
   settings: Settings;
@@ -24,12 +25,18 @@ export function AlertSettings({ settings, onChange, onTestAlert }: AlertSettings
     onChange("sound_enabled", enabled ? "1" : "0");
     if (!enabled) return;
     await audio.allow();
-    playSound(settings.soundId);
+    playSound(settings.soundId, settings.soundVolume);
   };
 
   const allowSound = async () => {
     await audio.allow();
-    playSound(settings.soundId);
+    playSound(settings.soundId, settings.soundVolume);
+  };
+
+  const commitVolume = async (volume: number) => {
+    onChange("sound_volume", String(volume));
+    await audio.allow();
+    playSound(settings.soundId, volume);
   };
 
   return (
@@ -80,6 +87,10 @@ export function AlertSettings({ settings, onChange, onTestAlert }: AlertSettings
           checked={settings.soundEnabled}
           onChange={(e) => toggleSound(e.target.checked)}
         />
+      </SettingRow>
+
+      <SettingRow title="Volume" description="How loud alerts play. Release the slider to hear a preview.">
+        <VolumeSlider value={settings.soundVolume} disabled={!settings.soundEnabled} onCommit={commitVolume} />
       </SettingRow>
 
       <SettingRow title="Test alert" description="Sends a notification and plays the sound using your current settings.">

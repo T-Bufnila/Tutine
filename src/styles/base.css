@@ -1,11 +1,6 @@
 /* ==========================================================================
-   Reset and typography (colour tokens live in themes.css)
+   Reset and base elements (colours: themes.css, fonts: typography.css)
    ========================================================================== */
-
-:root {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 14px;
-}
 
 * {
   box-sizing: border-box;
@@ -37,15 +32,15 @@ body {
 }
 
 h1 {
-  font-size: 22px;
+  font-size: 1.57rem;
   font-weight: 600;
 }
 h2 {
-  font-size: 15px;
+  font-size: 1.07rem;
   font-weight: 600;
 }
 h3 {
-  font-size: 16px;
+  font-size: 1.15rem;
   margin-bottom: 12px;
 }
 
@@ -55,7 +50,7 @@ h3 {
   color: var(--muted);
 }
 .small {
-  font-size: 12px;
+  font-size: 0.86rem;
 }
 .pad {
   padding: 4px 10px;
