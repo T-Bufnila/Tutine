@@ -1,9 +1,12 @@
 import { HistoryIcon, PlusIcon, SettingsIcon, SidebarIcon, TagIcon, TodayIcon } from "../../components/Icons";
 import { useConfirm } from "../../components/useConfirm";
 import type { RoutineActions } from "../../hooks/useAppData";
+import { useHintedLabel, useShortcut } from "../../hooks/useShortcuts";
 import { useStoredState } from "../../hooks/useStoredState";
 import { orderedWeekdays } from "../../lib/constants";
 import type { Routine, Settings, TodayData, View } from "../../lib/types";
+import { MusicButtons } from "../music/MusicButtons";
+import type { MusicController } from "../music/useMusic";
 import { NavButton } from "./NavButton";
 import { RoutineGroup } from "./RoutineGroup";
 
@@ -14,15 +17,31 @@ interface SidebarProps {
   view: View;
   setView: (view: View) => void;
   routineActions: RoutineActions;
+  music: MusicController;
+  updateAvailable: boolean;
 }
 
-export function Sidebar({ routines, today, settings, view, setView, routineActions }: SidebarProps) {
+export function Sidebar({
+  routines,
+  today,
+  settings,
+  view,
+  setView,
+  routineActions,
+  music,
+  updateAvailable,
+}: SidebarProps) {
   const [collapsed, setCollapsed] = useStoredState("sidebarCollapsed", false);
   const [openIds, setOpenIds] = useStoredState<number[]>("openRoutines", []);
   const [askConfirm, confirmDialog] = useConfirm();
 
   const days = orderedWeekdays(settings.weekStart);
   const toggleLabel = collapsed ? "Expand sidebar" : "Collapse sidebar";
+  const toggleTitle = useHintedLabel(toggleLabel, "toggleSidebar");
+  const newRoutineLabel = useHintedLabel("New routine", "newRoutine");
+
+  useShortcut("toggleSidebar", () => setCollapsed(!collapsed));
+  useShortcut("newRoutine", () => setView({ kind: "edit", routineId: null }));
 
   const toggleOpen = (id: number) =>
     setOpenIds(openIds.includes(id) ? openIds.filter((x) => x !== id) : [...openIds, id]);
@@ -38,7 +57,7 @@ export function Sidebar({ routines, today, settings, view, setView, routineActio
       {/* --- Collapse toggle ---------------------------------------------- */}
       <button
         className="collapse-toggle"
-        title={toggleLabel}
+        title={toggleTitle}
         aria-label={toggleLabel}
         onClick={() => setCollapsed(!collapsed)}
       >
@@ -58,7 +77,12 @@ export function Sidebar({ routines, today, settings, view, setView, routineActio
         <>
           <div className="section-head">
             <span>Routines</span>
-            <button className="icon add" title="New routine" onClick={() => setView({ kind: "edit", routineId: null })}>
+            <button
+              className="icon add"
+              title={newRoutineLabel}
+              aria-label="New routine"
+              onClick={() => setView({ kind: "edit", routineId: null })}
+            >
               <PlusIcon />
             </button>
           </div>
@@ -92,9 +116,11 @@ export function Sidebar({ routines, today, settings, view, setView, routineActio
 
       {/* --- Footer navigation -------------------------------------------- */}
       <div className="spacer" />
+      <MusicButtons music={music} collapsed={collapsed} />
       <NavButton
         icon={<HistoryIcon />}
         label="History"
+        shortcut="history"
         collapsed={collapsed}
         selected={view.kind === "history"}
         onClick={() => setView({ kind: "history" })}
@@ -102,6 +128,7 @@ export function Sidebar({ routines, today, settings, view, setView, routineActio
       <NavButton
         icon={<TagIcon />}
         label="Tag config"
+        shortcut="tags"
         collapsed={collapsed}
         selected={view.kind === "tags"}
         onClick={() => setView({ kind: "tags" })}
@@ -109,6 +136,8 @@ export function Sidebar({ routines, today, settings, view, setView, routineActio
       <NavButton
         icon={<SettingsIcon />}
         label="Settings"
+        shortcut="settings"
+        badge={updateAvailable}
         collapsed={collapsed}
         selected={view.kind === "settings"}
         onClick={() => setView({ kind: "settings" })}

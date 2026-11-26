@@ -1,13 +1,14 @@
 import { invoke } from "@tauri-apps/api/core";
 import { DEFAULT_THEME, isThemeId } from "./themes";
 import { DEFAULT_FONT, DEFAULT_FONT_SIZE, isFontId, isFontSize } from "./typography";
-import type { HistoryDay, Routine, SettingKey, Settings, Sound, Tag, TodayData } from "./types";
+import type { FutureDay, HistoryDay, Routine, SettingKey, Settings, Sound, Tag, TodayData } from "./types";
 
 export const DEFAULT_SOUND_ID = "builtin:chime";
 export const DEFAULT_SOUND_VOLUME = 100;
 
 export const DEFAULT_SETTINGS: Settings = {
   notifications: true,
+  showShortcuts: true,
   use24h: true,
   weekStart: "mon",
   soundEnabled: true,
@@ -26,6 +27,7 @@ function parseVolume(raw: string | undefined): number {
 function parseSettings(raw: Record<string, string>): Settings {
   return {
     notifications: raw.notifications !== "0",
+    showShortcuts: raw.show_shortcuts !== "0",
     use24h: raw.time_format !== "12",
     weekStart: raw.week_start === "sun" ? "sun" : "mon",
     soundEnabled: raw.sound_enabled !== "0",
@@ -60,6 +62,12 @@ export const api = {
   updateCustomTodo: (id: number, title: string, startTime: string, endTime: string) =>
     invoke<void>("update_custom_todo", { id, title, startTime, endTime }),
   deleteCustomTodo: (id: number) => invoke<void>("delete_custom_todo", { id }),
+
+  // Future Ref
+  getFutureDay: (date: string) => invoke<FutureDay>("get_future_day", { date }),
+  getFutureNoteDates: () => invoke<string[]>("get_future_note_dates"),
+  setFutureNote: (date: string, title: string, startTime: string, note: string) =>
+    invoke<void>("set_future_note", { date, title, startTime, note }),
 
   // History & settings
   getHistory: (days: number) => invoke<HistoryDay[]>("get_history", { days }),

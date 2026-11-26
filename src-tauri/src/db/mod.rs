@@ -1,3 +1,4 @@
+pub mod future;
 pub mod history;
 pub mod models;
 pub mod routines;
@@ -48,6 +49,13 @@ CREATE TABLE IF NOT EXISTS todos (
     done          INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_todos_date ON todos(date);
+CREATE TABLE IF NOT EXISTS future_notes (
+    date       TEXT NOT NULL,
+    title      TEXT NOT NULL,
+    start_time TEXT NOT NULL,
+    note       TEXT NOT NULL,
+    PRIMARY KEY (date, title, start_time)
+);
 CREATE TABLE IF NOT EXISTS history (
     date      TEXT PRIMARY KEY,
     completed INTEGER NOT NULL,

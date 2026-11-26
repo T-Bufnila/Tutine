@@ -1,4 +1,4 @@
-use crate::db::{self, history, models, routines, settings, sounds, tags, todos};
+use crate::db::{self, future, history, models, routines, settings, sounds, tags, todos};
 use percent_encoding::percent_decode_str;
 use rusqlite::Connection;
 use std::collections::HashMap;
@@ -20,6 +20,18 @@ fn require(value: &str, message: &str) -> CmdResult<()> {
     } else {
         Ok(())
     }
+}
+
+// --- Updates --------------------------------------------------------------
+
+const RELEASES_URL: &str = "https://github.com/T-Bufnila/Tutine/releases";
+
+#[tauri::command]
+pub fn open_release_page(url: String) -> CmdResult<()> {
+    if !url.starts_with(RELEASES_URL) {
+        return Err("Not a Tutine release link".into());
+    }
+    crate::spotify_auth::open_in_browser(&url)
 }
 
 // --- Routines -------------------------------------------------------------
@@ -133,6 +145,36 @@ pub fn update_custom_todo(
 #[tauri::command]
 pub fn delete_custom_todo(state: State<AppDb>, id: i64) -> CmdResult<()> {
     with_db(&state, |c| todos::delete_custom(c, id))
+}
+
+// --- Future Ref -----------------------------------------------------------
+
+const MAX_NOTE_CHARS: usize = 200;
+
+#[tauri::command]
+pub fn get_future_day(state: State<AppDb>, date: String) -> CmdResult<models::FutureDay> {
+    let day = future::parse_future_date(&date)?;
+    with_db(&state, |c| future::get_day(c, day))
+}
+
+#[tauri::command]
+pub fn get_future_note_dates(state: State<AppDb>) -> CmdResult<Vec<String>> {
+    with_db(&state, |c| future::note_dates(c))
+}
+
+#[tauri::command]
+pub fn set_future_note(
+    state: State<AppDb>,
+    date: String,
+    title: String,
+    start_time: String,
+    note: String,
+) -> CmdResult<()> {
+    future::parse_future_date(&date)?;
+    if note.trim().chars().count() > MAX_NOTE_CHARS {
+        return Err(format!("Notes are limited to {MAX_NOTE_CHARS} characters"));
+    }
+    with_db(&state, |c| future::set_note(c, &date, &title, &start_time, &note))
 }
 
 // --- History & settings ---------------------------------------------------

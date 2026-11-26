@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, ModalActions } from "../../components/Modal";
+import { useHintedLabel, useShortcut } from "../../hooks/useShortcuts";
 
 interface TodoFormValues {
   title: string;
@@ -28,6 +29,9 @@ export function TodoForm({ title, initial, onSave, onClose }: TodoFormProps) {
     onSave({ title: name.trim(), startTime, endTime });
     onClose();
   };
+
+  const saveTitle = useHintedLabel("Save", "save");
+  useShortcut("save", submit, { inDialog: true });
 
   return (
     <Modal title={title} onClose={onClose}>
@@ -60,7 +64,7 @@ export function TodoForm({ title, initial, onSave, onClose }: TodoFormProps) {
         <button className="btn ghost" onClick={onClose}>
           Cancel
         </button>
-        <button className="btn primary" disabled={!canSave} onClick={submit}>
+        <button className="btn primary" title={saveTitle} disabled={!canSave} onClick={submit}>
           Save
         </button>
       </ModalActions>

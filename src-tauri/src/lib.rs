@@ -1,5 +1,6 @@
 mod commands;
 mod db;
+mod spotify_auth;
 
 use commands::AppDb;
 use std::sync::Mutex;
@@ -23,6 +24,7 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            commands::open_release_page,
             commands::list_routines,
             commands::save_routine,
             commands::delete_routine,
@@ -37,6 +39,9 @@ pub fn run() {
             commands::add_custom_todo,
             commands::update_custom_todo,
             commands::delete_custom_todo,
+            commands::get_future_day,
+            commands::get_future_note_dates,
+            commands::set_future_note,
             commands::get_history,
             commands::get_settings,
             commands::set_setting,
@@ -45,6 +50,8 @@ pub fn run() {
             commands::rename_sound,
             commands::delete_sound,
             commands::get_sound_data,
+            spotify_auth::spotify_authorize,
+            spotify_auth::spotify_cancel_authorize,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

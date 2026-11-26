@@ -84,6 +84,13 @@ export const TodayIcon = () => (
     <path d="M3 10h18M8 3v4M16 3v4" />
   </Svg>
 );
+export const CalendarIcon = () => (
+  <Svg>
+    <rect x="3" y="5" width="18" height="16" rx="2" />
+    <path d="M3 10h18M8 3v4M16 3v4" />
+    <path d="M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01" />
+  </Svg>
+);
 export const HistoryIcon = () => (
   <Svg>
     <rect x="3" y="3" width="7" height="7" />
@@ -104,5 +111,23 @@ export const SettingsIcon = () => (
     <circle cx="16" cy="6" r="2" />
     <circle cx="8" cy="12" r="2" />
     <circle cx="18" cy="18" r="2" />
+  </Svg>
+);
+export const SpotifyIcon = () => (
+  <Svg>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M7.5 9.5c3-1 6.5-.7 9 .8M8 12.5c2.5-.7 5.2-.5 7.5.8M8.5 15.3c2-.5 4-.3 5.8.6" />
+  </Svg>
+);
+export const YouTubeIcon = () => (
+  <Svg>
+    <rect x="2.5" y="5.5" width="19" height="13" rx="4" />
+    <path d="M10 9.5v5l4.5-2.5z" fill="currentColor" />
+  </Svg>
+);
+export const VolumeIcon = ({ muted }: { muted?: boolean }) => (
+  <Svg>
+    <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" />
+    {muted ? <path d="M16 9.5l5 5M21 9.5l-5 5" /> : <path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" />}
   </Svg>
 );

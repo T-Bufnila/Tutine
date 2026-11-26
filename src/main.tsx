@@ -13,6 +13,8 @@ import "./styles/routines.css";
 import "./styles/tags.css";
 import "./styles/settings.css";
 import "./styles/history.css";
+import "./styles/future.css";
+import "./styles/music.css";
 
 applyCachedTheme();
 applyCachedTypography();

@@ -66,6 +66,7 @@
 }
 
 .nav {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -85,6 +86,20 @@
 .sidebar.collapsed .nav {
   justify-content: center;
   padding: 10px 0;
+}
+
+.nav-badge {
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: var(--red);
+}
+.sidebar.collapsed .nav-badge {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  margin-left: 0;
 }
 
 .section-head {

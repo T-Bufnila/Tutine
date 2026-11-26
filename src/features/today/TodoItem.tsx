@@ -20,7 +20,10 @@ export function TodoItem({ todo, tag, use24h, current, onToggle, actions }: Todo
   return (
     <li className={classes}>
       <div className="todo-main">
-        <span className="todo-title">{todo.title}</span>
+        <div className="todo-text">
+          <span className="todo-title">{todo.title}</span>
+          {todo.note ? <span className="todo-note">{todo.note}</span> : null}
+        </div>
         {todo.kind === "custom" ? <span className="badge temp">Temp</span> : null}
       </div>
       <TagLabel tag={tag} />

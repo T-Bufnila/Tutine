@@ -54,6 +54,8 @@ pub struct Todo {
     pub break_minutes: i64,
     pub tag_id: Option<i64>,
     pub done: bool,
+    /// A note left in advance via Future Ref (routine todos only).
+    pub note: Option<String>,
 }
 
 /// A colour label that routine items can reference; the description is optional.
@@ -89,4 +91,25 @@ pub struct HistoryDay {
 pub struct Sound {
     pub id: i64,
     pub name: String,
+}
+
+/// A routine item as scheduled on a future date, with any note left for it.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FutureItem {
+    pub title: String,
+    pub start_time: String,
+    pub end_time: String,
+    pub break_minutes: i64,
+    pub tag_id: Option<i64>,
+    pub note: Option<String>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FutureDay {
+    pub date: String,
+    pub routine_id: Option<i64>,
+    pub routine_name: Option<String>,
+    pub items: Vec<FutureItem>,
 }

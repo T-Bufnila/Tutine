@@ -1,4 +1,6 @@
 import type { SettingKey, Settings } from "../../lib/types";
+import { formatShortcut } from "../../lib/shortcuts";
+import { openReleasePage, type AvailableUpdate } from "../../lib/updates";
 import { FONT_SIZE_OPTIONS } from "../../lib/typography";
 import { Tabs } from "../../components/Tabs";
 import { AlertSettings } from "./AlertSettings";
@@ -9,17 +11,31 @@ import { ThemePicker } from "./ThemePicker";
 
 interface SettingsViewProps {
   settings: Settings;
+  version: string | null;
+  update: AvailableUpdate | null;
   onChange: (key: SettingKey, value: string) => void;
   onTestAlert: () => void;
   onSoundsChanged: () => void;
 }
 
-export function SettingsView({ settings, onChange, onTestAlert, onSoundsChanged }: SettingsViewProps) {
+export function SettingsView({ settings, version, update, onChange, onTestAlert, onSoundsChanged }: SettingsViewProps) {
   return (
     <div className="page">
       <header className="page-head">
         <h1>Settings</h1>
       </header>
+
+      {update ? (
+        <div className="update-banner" role="status">
+          <span>
+            <strong>New update available</strong>
+            <span className="muted small"> · Version {update.version}</span>
+          </span>
+          <button className="link" onClick={() => openReleasePage(update.url).catch(() => {})}>
+            View release
+          </button>
+        </div>
+      ) : null}
 
       <SettingsSection title="Appearance">
         <div className="setting-block">
@@ -38,6 +54,21 @@ export function SettingsView({ settings, onChange, onTestAlert, onSoundsChanged 
           <div className="muted small">Pick the typeface that is easiest for you to read.</div>
           <FontPicker value={settings.fontFamily} onChange={(font) => onChange("font_family", font)} />
         </div>
+      </SettingsSection>
+
+      <SettingsSection title="Keyboard">
+        <SettingRow
+          title="Show keyboard shortcuts"
+          description={`Show shortcut hints in tooltips and next to menu items. Press ${formatShortcut("help")} to see them all.`}
+        >
+          <input
+            type="checkbox"
+            className="switch"
+            aria-label="Show keyboard shortcuts"
+            checked={settings.showShortcuts}
+            onChange={(e) => onChange("show_shortcuts", e.target.checked ? "1" : "0")}
+          />
+        </SettingRow>
       </SettingsSection>
 
       <SettingsSection title="Alerts">
@@ -72,6 +103,8 @@ export function SettingsView({ settings, onChange, onTestAlert, onSoundsChanged 
           </select>
         </SettingRow>
       </SettingsSection>
+
+      {version ? <p className="muted small app-version">Version {version}</p> : null}
     </div>
   );
 }

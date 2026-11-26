@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
-import { EditIcon, PlusIcon, TrashIcon } from "../../components/Icons";
+import { CalendarIcon, EditIcon, PlusIcon, TrashIcon } from "../../components/Icons";
 import { PageHeader } from "../../components/PageHeader";
 import { useConfirm } from "../../components/useConfirm";
+import { useHintedLabel, useShortcut } from "../../hooks/useShortcuts";
 import { fmtLongDate, isWithin } from "../../lib/time";
 import type { Settings, Tag, TodayData, Todo } from "../../lib/types";
 import { BreakTodo } from "./BreakTodo";
@@ -16,14 +17,19 @@ interface TodayViewProps {
   settings: Settings;
   now: Date;
   actions: TodayActions;
+  onOpenFutureRef: () => void;
 }
 
 /** `null` = closed, `{}` = new temp todo, `{ todo }` = editing that todo. */
 type FormState = { todo?: Todo } | null;
 
-export function TodayView({ today, tags, settings, now, actions }: TodayViewProps) {
+export function TodayView({ today, tags, settings, now, actions, onOpenFutureRef }: TodayViewProps) {
   const [form, setForm] = useState<FormState>(null);
   const [askConfirm, confirmDialog] = useConfirm();
+  const futureRefTitle = useHintedLabel("Open Future Ref", "futureRef");
+  const newTempTitle = useHintedLabel("New temp todo", "newTemp");
+
+  useShortcut("newTemp", () => setForm({}));
 
   const { total, done, hasSchedule } = summarize(today.todos);
   const unlocked = useMemo(() => unlockedBreakIds(today.todos), [today.todos]);
@@ -40,7 +46,10 @@ export function TodayView({ today, tags, settings, now, actions }: TodayViewProp
   return (
     <div className="page">
       <PageHeader title={fmtLongDate(now)} subtitle={subtitle}>
-        <button className="temp-add" onClick={() => setForm({})}>
+        <button className="temp-add future-ref-btn" title={futureRefTitle} onClick={onOpenFutureRef}>
+          <CalendarIcon /> Future Ref
+        </button>
+        <button className="temp-add" title={newTempTitle} onClick={() => setForm({})}>
           <PlusIcon size={18} /> Temp todo
         </button>
       </PageHeader>

@@ -22,11 +22,19 @@ fn week_floor(d: NaiveDate, sunday_start: bool) -> NaiveDate {
     d - Duration::days(offset as i64)
 }
 
+pub fn parse_date(s: &str) -> Option<NaiveDate> {
+    NaiveDate::parse_from_str(s, "%Y-%m-%d").ok()
+}
+
 /// Zero-based week within a multi-week cycle that started on `start_date`.
 pub fn current_week(start_date: &str, weeks: i64, sunday_start: bool) -> i64 {
-    let now = today();
-    let start = NaiveDate::parse_from_str(start_date, "%Y-%m-%d").unwrap_or(now);
-    let elapsed = (week_floor(now, sunday_start) - week_floor(start, sunday_start))
+    week_on(start_date, weeks, sunday_start, today())
+}
+
+/// Like `current_week`, but for an arbitrary date.
+pub fn week_on(start_date: &str, weeks: i64, sunday_start: bool, on: NaiveDate) -> i64 {
+    let start = parse_date(start_date).unwrap_or(on);
+    let elapsed = (week_floor(on, sunday_start) - week_floor(start, sunday_start))
         .num_days()
         .div_euclid(7);
     elapsed.rem_euclid(weeks.max(1))

@@ -242,3 +242,27 @@ select:focus {
 .modal p {
   margin-bottom: 12px;
 }
+
+/* --- Keyboard shortcuts ---------------------------------------------------- */
+.kbd {
+  margin-left: auto;
+  padding: 1px 6px;
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.shortcut-list {
+  list-style: none;
+  margin: 0 0 4px;
+  padding: 0;
+}
+.shortcut-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+}

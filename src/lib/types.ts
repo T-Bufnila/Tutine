@@ -40,6 +40,8 @@ export interface Todo {
   breakMinutes: number;
   tagId: number | null;
   done: boolean;
+  /** A note left in advance via Future Ref. */
+  note: string | null;
 }
 
 export interface TodayData {
@@ -48,6 +50,23 @@ export interface TodayData {
   activeRoutineId: number | null;
   activeRoutineName: string | null;
   todos: Todo[];
+}
+
+/** A routine item as scheduled on a future date. */
+export interface FutureItem {
+  title: string;
+  startTime: string;
+  endTime: string;
+  breakMinutes: number;
+  tagId: number | null;
+  note: string | null;
+}
+
+export interface FutureDay {
+  date: string;
+  routineId: number | null;
+  routineName: string | null;
+  items: FutureItem[];
 }
 
 export interface HistoryDay {
@@ -60,6 +79,7 @@ export type WeekStart = "mon" | "sun";
 
 export interface Settings {
   notifications: boolean;
+  showShortcuts: boolean;
   use24h: boolean;
   weekStart: WeekStart;
   soundEnabled: boolean;
@@ -74,6 +94,7 @@ export interface Settings {
 
 export type SettingKey =
   | "notifications"
+  | "show_shortcuts"
   | "time_format"
   | "week_start"
   | "sound_enabled"
@@ -93,6 +114,7 @@ export type View =
   | { kind: "today" }
   | { kind: "preview"; routineId: number; weekday: number }
   | { kind: "edit"; routineId: number | null }
+  | { kind: "future"; date: string | null }
   | { kind: "history" }
   | { kind: "tags" }
   | { kind: "settings" };

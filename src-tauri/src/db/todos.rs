@@ -45,6 +45,7 @@ fn map_todo(r: &Row) -> Res<Todo> {
         break_minutes: r.get(5)?,
         tag_id: r.get(6)?,
         done: r.get::<_, i64>(7)? != 0,
+        note: r.get(8)?,
     })
 }
 
@@ -119,6 +120,7 @@ fn ensure_today(conn: &Connection) -> Res<()> {
     let date = time::fmt_date(time::today());
     let tx = conn.unchecked_transaction()?;
     tx.execute("DELETE FROM todos WHERE date < ?1", [&date])?;
+    tx.execute("DELETE FROM future_notes WHERE date < ?1", [&date])?;
 
     let active = routines::active(&tx)?;
     let routine_key = active.as_ref().map(|a| a.id.to_string()).unwrap_or_default();
@@ -162,11 +164,15 @@ pub fn get_today(conn: &Connection) -> Res<TodayData> {
     let active = routines::active(conn)?;
 
     let mut stmt = conn.prepare(
-        "SELECT id, kind, title, start_time, end_time, break_minutes, tag_id, done
-         FROM todos WHERE date = ?1
-         ORDER BY CASE WHEN start_time = '' THEN 1 ELSE 0 END, start_time, end_time, id",
+        "SELECT t.id, t.kind, t.title, t.start_time, t.end_time, t.break_minutes, t.tag_id, t.done,
+                (SELECT n.note FROM future_notes n
+                 WHERE n.date = t.date AND n.title = t.title AND n.start_time = t.start_time AND t.kind = ?2)
+         FROM todos t WHERE t.date = ?1
+         ORDER BY CASE WHEN t.start_time = '' THEN 1 ELSE 0 END, t.start_time, t.end_time, t.id",
     )?;
-    let todos = stmt.query_map([&date], map_todo)?.collect::<Res<Vec<_>>>()?;
+    let todos = stmt
+        .query_map(params![date, KIND_ROUTINE], map_todo)?
+        .collect::<Res<Vec<_>>>()?;
 
     Ok(TodayData {
         date,

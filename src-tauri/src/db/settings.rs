@@ -35,8 +35,9 @@ pub const GEN_ROUTINE: &str = "gen_routine";
 pub const GEN_DIRTY: &str = "gen_dirty";
 
 /// Settings the frontend is allowed to change.
-pub const USER_KEYS: [&str; 9] = [
+pub const USER_KEYS: [&str; 10] = [
     "notifications",
+    "show_shortcuts",
     "time_format",
     WEEK_START,
     SOUND_ENABLED,
@@ -87,7 +88,7 @@ pub fn list_user(conn: &Connection) -> Res<HashMap<String, String>> {
 /// Rejects unknown keys and values the UI could never produce.
 pub fn validate_user(key: &str, value: &str) -> Result<(), String> {
     let valid = match key {
-        "notifications" | SOUND_ENABLED => ["0", "1"].contains(&value),
+        "notifications" | "show_shortcuts" | SOUND_ENABLED => ["0", "1"].contains(&value),
         "time_format" => ["12", "24"].contains(&value),
         WEEK_START => ["mon", "sun"].contains(&value),
         SOUND_ID => value.starts_with("builtin:") || value.starts_with("custom:"),

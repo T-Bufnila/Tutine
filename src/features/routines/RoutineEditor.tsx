@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { PlusIcon } from "../../components/Icons";
 import { PageHeader } from "../../components/PageHeader";
+import { useHintedLabel, useShortcut } from "../../hooks/useShortcuts";
 import { localDateString, weekdayIndex } from "../../lib/time";
 import type { Routine, RoutineItem, Settings, Tag } from "../../lib/types";
 import { RoutineItemEditor } from "./RoutineItemEditor";
@@ -75,13 +76,18 @@ export function RoutineEditor({ routine, tags, settings, onSave, onCancel }: Rou
     });
   };
 
+  const saveTitle = useHintedLabel("Save", "save");
+  const addItemTitle = useHintedLabel("Add item", "addItem");
+  useShortcut("save", save);
+  useShortcut("addItem", addItem);
+
   return (
     <div className="page">
       <PageHeader title={routine ? "Edit routine" : "New routine"}>
         <button className="btn ghost" onClick={onCancel}>
           Cancel
         </button>
-        <button className="btn primary" onClick={save}>
+        <button className="btn primary" title={saveTitle} onClick={save}>
           Save
         </button>
       </PageHeader>
@@ -122,7 +128,7 @@ export function RoutineEditor({ routine, tags, settings, onSave, onCancel }: Rou
       />
 
       <div className="items-head">
-        <button className="icon add" title="Add item" onClick={addItem}>
+        <button className="icon add" title={addItemTitle} aria-label="Add item" onClick={addItem}>
           <PlusIcon size={20} />
         </button>
       </div>
